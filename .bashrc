@@ -91,6 +91,7 @@ alias l='ls -CF'
 alias lh='ls -lha'
 alias ddup='docker-compose up -d'
 alias ddown='docker-compose down'
+alias dc='docker-compose'
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
