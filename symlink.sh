@@ -5,10 +5,12 @@ git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 echo Cloning TPM for Tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 echo Setting symlinks
-ln -nfs ./.tmux.conf $HOME/.tmux.conf
-ln -nfs ./.bashrc $HOME/.bashrc
-ln -nfs ./.vimrc $HOME/.vimrc
-ln -nfs ./.gitconfig $HOME/.gitconfig
+
+MYDIR="$(dirname $(readlink -f $0))"
+ln -nfs $MYDIR/.tmux.conf $HOME/.tmux.conf
+ln -nfs $MYDIR/.bashrc $HOME/.bashrc
+ln -nfs $MYDIR/.vimrc $HOME/.vimrc
+ln -nfs $MYDIR/.gitconfig $HOME/.gitconfig
 
 # If ~/.inputrc doesn't exist yet: First include the original /etc/inputrc
 # so it won't get overriden
