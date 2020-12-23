@@ -4,7 +4,7 @@ set nocompatible              " be iMproved, required
 
 autocmd BufRead,BufNewFile *.fish set ft=fish
 autocmd BufRead,BufNewFile *.md set filetype=markdown
-autocmd BufRead,BufNewFile Podfile,*.podspec,Vagrantfile set filetype=ruby
+autocmd BufRead,BufNewFile Podfile,*.podspec,vagrantfile set filetype=ruby
 autocmd FileType gitcommit setlocal spell
 
 " Automatically create parent dirs when writing a file
