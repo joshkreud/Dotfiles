@@ -9,8 +9,9 @@ ln -nfs $MYDIR/.vimrc $HOME/.vimrc
 ln -nfs $MYDIR/.gitconfig $HOME/.gitconfig
 ln -nfs $MYDIR/.inputrc $HOME/.inputrc
 
-cp -r $MYDIR/.vim/ $HOME/.vim/
+cp -r $MYDIR/.vim/ $HOME/
 
 mkdir -p ~/.tmux/plugins
 echo Cloning TPM for Tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+echo "done installing dotfiles"
