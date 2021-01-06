@@ -3,6 +3,8 @@
 	email = Joshua_Kreuder@outlook.de
 [push]
 	default = simple
+[core]
+    autocrlf = true
 [pull]
 	rebase = true
 [status]
