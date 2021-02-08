@@ -8,6 +8,8 @@ ln -nfs $MYDIR/.bashrc $HOME/.bashrc
 ln -nfs $MYDIR/.vimrc $HOME/.vimrc
 ln -nfs $MYDIR/.gitconfig $HOME/.gitconfig
 ln -nfs $MYDIR/.inputrc $HOME/.inputrc
+mkdir -p $HOME/.config/fish
+ln -nfs $MYDIR/fish/config.fish $HOME/.config/fish/config.fish
 
 cp -r $MYDIR/.vim/ $HOME/
 
