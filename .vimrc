@@ -50,7 +50,7 @@ set number
 set relativenumber
 set noerrorbells
 set visualbell
-set mouse-=a
+set mouse=v
 set title
 set background=dark
 
