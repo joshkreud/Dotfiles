@@ -72,7 +72,7 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 alias lh='ls -lha'
-
+alias sudo="sudo " #Preserve Aliases in sudo
 alias ddup='docker-compose up -d'
 alias ddupf='docker-compose up -d --force-recreate'
 alias ddown='docker-compose down'
@@ -94,3 +94,5 @@ fi
 export PATH=$(python3 -m site --user-base)/bin:$PATH
 # Local scripts
 export PATH=$HOME/.local/bin:$PATH
+
+export EDITOR=vim

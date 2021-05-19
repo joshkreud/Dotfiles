@@ -1,6 +1,6 @@
 alias psh="pipenv shell"
 alias sudoe="sudo -E"
-alias kb="code ~/dev/YoshiKB"
+alias sudo="sudo " #Preserve Aliases in sudo
 
 alias ll='ls -l'
 alias la='ls -A'
