@@ -12,3 +12,6 @@ alias ddupf='docker-compose up -d --force-recreate'
 alias ddown='docker-compose down'
 alias dc='docker-compose'
 alias rustscan='docker run -it --rm --name rustscan rustscan/rustscan:1.10.0'
+
+export EDITOR=vim
+fish_add_path -p $HOME/.local/bin
