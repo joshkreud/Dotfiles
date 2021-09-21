@@ -1,0 +1,15 @@
+#!/bin/bash
+#Please source this file to activate the Agent
+if [ -z "$SSH_AUTH_SOCK" ] ; then
+  echo Enabling SSH Agent
+  eval `ssh-agent -s`
+  ssh-add
+fi
+
+if ssh-add -l | grep -q 'The agent has no identities.'; then
+  echo "SSH Agent empty"
+fi
+
+if ssh-add -l | grep -q 'Could not open a connection to your Authentication agent.';then
+  echo "SSH Agent not running"
+fi
