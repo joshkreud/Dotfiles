@@ -77,7 +77,8 @@ alias ddup='docker-compose up -d'
 alias ddupf='docker-compose up -d --force-recreate'
 alias ddown='docker-compose down'
 alias dc='docker-compose'
-alias rustscan='docker run -it --rm --name rustscan rustscan/rustscan:1.10.0'
+alias rustscan='docker run -it --rm --name rustscan rustscan/rustscan'
+alias ssh-keyrem='ssh-keygen -f $HOME/.ssh/known_hosts -R'
 
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
