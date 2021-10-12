@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -90,10 +91,20 @@ fi
 
 
 ## PATH
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
 # pip
 export PATH=$(python3 -m site --user-base)/bin:$PATH
+export PATH=$DIR/commands:$PATH
 # Local scripts
 export PATH=$HOME/.local/bin:$PATH
+
+PATH=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }') # Deduplicate PATH
 
 export EDITOR=vim
