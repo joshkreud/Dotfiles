@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -105,6 +106,7 @@ export PATH=$DIR/commands:$PATH
 # Local scripts
 export PATH=$HOME/.local/bin:$PATH
 
-PATH=$(printf "%s" "$PATH" | awk -v RS=':' '!a[$1]++ { if (NR > 1) printf RS; printf $1 }') # Deduplicate PATH
-
 export EDITOR=vim
+
+/usr/bin/keychain --nogui $HOME/.ssh/id_rsa
+source $HOME/.keychain/$HOSTNAME-sh
