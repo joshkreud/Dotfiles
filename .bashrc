@@ -107,6 +107,3 @@ export PATH=$DIR/commands:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
 export EDITOR=vim
-
-/usr/bin/keychain --nogui $HOME/.ssh/id_rsa
-source $HOME/.keychain/$HOSTNAME-sh
