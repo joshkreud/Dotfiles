@@ -81,7 +81,7 @@ alias ddown='docker-compose down'
 alias dc='docker-compose'
 alias rustscan='docker run -it --rm --name rustscan rustscan/rustscan'
 alias ssh-keyrem='ssh-keygen -f $HOME/.ssh/known_hosts -R'
-alias do='devcontainer open'
+alias odev='devcontainer open'
 
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
