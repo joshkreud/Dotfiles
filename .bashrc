@@ -81,6 +81,7 @@ alias ddown='docker-compose down'
 alias dc='docker-compose'
 alias rustscan='docker run -it --rm --name rustscan rustscan/rustscan'
 alias ssh-keyrem='ssh-keygen -f $HOME/.ssh/known_hosts -R'
+alias do='devcontainer open'
 
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -90,20 +91,24 @@ if ! shopt -oq posix; then
   fi
 fi
 
-
 ## PATH
 SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-  DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+# resolve $SOURCE until the file is no longer a symlink
+while [ -h "$SOURCE" ]
+do
+  DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
   SOURCE="$(readlink "$SOURCE")"
-  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+  # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
-DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+
+DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 
 # pip
-export PATH=$(python3 -m site --user-base)/bin:$PATH
-export PATH=$DIR/commands:$PATH
+PATH=$(python3 -m site --user-base)/bin:$PATH
+PATH=$DIR/commands:$PATH
 # Local scripts
-export PATH=$HOME/.local/bin:$PATH
+PATH=$HOME/.local/bin:$PATH
 
+export PATH=$PATH
 export EDITOR=vim
