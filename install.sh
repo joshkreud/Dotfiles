@@ -14,6 +14,9 @@ ln -nfs $MYDIR/fish/ $HOME/.config/fish
 cp -r $MYDIR/.vim/ $HOME/
 
 mkdir -p ~/.tmux/plugins
+mkdir -p ~/.bashrc.dirname
+chmod 700 ~/.bashrc.d
+
 echo Cloning TPM for Tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 echo "done installing dotfiles"
