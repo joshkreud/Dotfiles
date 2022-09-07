@@ -14,7 +14,7 @@ ln -nfs $MYDIR/fish/ $HOME/.config/fish
 cp -r $MYDIR/.vim/ $HOME/
 
 mkdir -p ~/.tmux/plugins
-mkdir -p ~/.bashrc.dirname
+mkdir -p ~/.bashrc.d
 chmod 700 ~/.bashrc.d
 
 echo Cloning TPM for Tmux
