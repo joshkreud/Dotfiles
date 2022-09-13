@@ -5,8 +5,6 @@
     default = simple
 [core]
 	autocrlf = false
-[pull]
-    rebase = true
 [status]
     showUntrackedFiles = all
 [init]
