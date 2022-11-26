@@ -7,6 +7,12 @@ HYPHEN_INSENSITIVE="true"
 
 zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
-plugins=(git poetry git)
+plugins=(git poetry git safe-paste)
+
+unset zle_bracketed_paste
 
 source $ZSH/oh-my-zsh.sh
+
+for file in $(find .rc.d -type f -name "*.rc" -o -name "*.zshrc"); do
+  source "$file"
+done

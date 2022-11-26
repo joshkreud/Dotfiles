@@ -1,0 +1,2 @@
+alias kc="eval $(keychain --eval --quiet id_ed25519)"
+bind 'set enable-bracketed-paste off'

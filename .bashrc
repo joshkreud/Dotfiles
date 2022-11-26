@@ -113,7 +113,6 @@ PATH=$HOME/.local/bin:$PATH
 export PATH=$PATH
 export EDITOR=vim
 
-for file in ~/.bashrc.d/*.bashrc;
-do
+for file in $(find .rc.d -type f -name "*.rc" -o -name "*.bashrc"); do
   source "$file"
 done
