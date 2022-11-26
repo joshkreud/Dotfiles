@@ -69,20 +69,6 @@ fi
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# some more ls aliases
-alias ll='ls -l'
-alias la='ls -A'
-alias l='ls -CF'
-alias lh='ls -lha'
-alias sudo="sudo " #Preserve Aliases in sudo
-alias ddup='docker-compose up -d'
-alias ddupf='docker-compose up -d --force-recreate'
-alias ddown='docker-compose down'
-alias dc='docker-compose'
-alias rustscan='docker run -it --rm --name rustscan rustscan/rustscan'
-alias ssh-keyrem='ssh-keygen -f $HOME/.ssh/known_hosts -R'
-alias odev='devcontainer open'
-
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
