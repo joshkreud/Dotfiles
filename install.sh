@@ -4,6 +4,9 @@
 POSITIONAL_ARGS=()
 INSTALL_SSH=false
 
+command -v apt &> /dev/null && APT=true || APT=false
+command -v pacman &> /dev/null && PACMAN=true || PACMAN=false
+
 while [[ $# -gt 0 ]]; do
     case $1 in
     -z|--zsh)
@@ -16,6 +19,13 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+if $APT;then
+    sudo apt install git
+elif $PACMAN; then
+    sudo pacman -S git --noconfirm
+fi
+
+
 echo Setting symlinks
 MYDIR="$(dirname $(readlink -f $0))"
 ln -nfs $MYDIR/.tmux.conf $HOME/.tmux.conf
@@ -25,8 +35,10 @@ ln -nfs $MYDIR/.vimrc $HOME/.vimrc
 ln -nfs $MYDIR/.gitconfig $HOME/.gitconfig
 ln -nfs $MYDIR/.inputrc $HOME/.inputrc
 ln -nfs $MYDIR/fish/ $HOME/.config/fish
+mkdir -p $HOME/.config/alacritty
+ln -nfs $MYDIR/alacritty.yml $HOME/.config/alacritty/alacritty.yml
 
-cp -r $MYDIR/.vim/ $HOME/
+ln -nfs  $MYDIR/.vim/ $HOME/.vim
 
 mkdir -p ~/.tmux/plugins
 mkdir -p ~/.bashrc.d
@@ -38,17 +50,19 @@ if [ ! "$(ls -A $DIR)" ]; then
 fi
 echo "done installing dotfiles"
 
-if command -v apt &> /dev/null; then
-    echo "Installing Tools for Debian based systems:"
-    sudo apt install keychain socat git tmux vim -y
-    exit
+echo "Installing Tools:"
+if $APT;then
+    sudo apt install keychain socat tmux vim -y
+elif $PACMAN; then
+    sudo pacman -S keychain tmux vim socat --noconfirm
 fi
 
 if [ $INSTALL_SSH == true ]; then
     ln -nfs $MYDIR/.zshrc $HOME/.zshrc
-    if command -v apt &> /dev/null; then
+    if $APT;then
         sudo apt install zsh -y
-        exit
+    elif $PACMAN; then
+        sudo pacman -S zsh --noconfirm
     fi
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi

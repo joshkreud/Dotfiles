@@ -1,0 +1,23 @@
+# Configuration for Alacritty, the GPU enhanced terminal emulator.
+
+# Window decorations
+#
+# Values for `decorations`:
+#     - full: Borders and title bar
+#     - none: Neither borders nor title bar
+decorations: full
+
+dynamic_title: true
+
+#scrolling:
+history: 10000
+
+font:
+  size: 10.0
+
+shell:
+  program: /bin/zsh
+  args:
+    - -l
+    - -c
+    - "tmux attach || tmux"
