@@ -112,3 +112,8 @@ PATH=$HOME/.local/bin:$PATH
 
 export PATH=$PATH
 export EDITOR=vim
+
+for file in ~/.bashrc.d/*.bashrc;
+do
+  source "$file"
+done
