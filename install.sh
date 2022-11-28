@@ -30,9 +30,9 @@ else
     exit 1
 fi
 
-MYDIR="$(dirname $(readlink -f $0))"
 
 echo "==> Setting symlinks"
+MYDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ln -nfs $MYDIR/.tmux.conf $HOME/.tmux.conf
 ln -nfs $MYDIR/.bashrc $HOME/.bashrc
 ln -nfs $MYDIR/.bash_profile $HOME/.bash_profile
@@ -58,7 +58,7 @@ if [ ! "$(ls -A $TMUX_PLUG_DIR/tpm)" ]; then
     git clone https://github.com/tmux-plugins/tpm $TMUX_PLUG_DIR/tpm
 fi
 
-echo "Installing Tools:"
+echo "==> Installing Tools:"
 if $APT;then
     sudo apt install keychain socat tmux vim -y
 elif $PACMAN; then
