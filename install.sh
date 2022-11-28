@@ -11,7 +11,7 @@ command -v pacman &> /dev/null && PACMAN=true || PACMAN=false
 while [[ $# -gt 0 ]]; do
     case $1 in
     -z|--zsh)
-        INSTALL_ZSH=true;shift;shift;;
+        INSTALL_ZSH=true;shift;;
     -*|--*)
         echo "Unknown option $1"
         exit 1;;
