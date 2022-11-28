@@ -1,4 +1,9 @@
 #!/bin/bash
+if ! command -v wslvar &> /dev/null
+then
+    echo "wslvar could not be found. Installing Wslu"
+    sudo apt-get install wslu
+fi
 WIN_PATH=$(wslpath "$(wslvar USERPROFILE)")
 echo Copying .ssh from $WIN_PATH
 cp -r ${WIN_PATH}/.ssh ~
