@@ -28,5 +28,5 @@ Zshrc and bashrc are configured to source files from `$HOME/rc.d`.
 ## Config SSH Keys for Agent:
 Add the following eval line to a file in `~/.rc.d/`
 ```bash
-eval `/usr/bin/keychain --eval --quiet ssh id_rsa other_key ./other/key`
+eval $(/usr/bin/keychain --eval --noask --quiet id_rsa id_rsa_priv)
 ```
