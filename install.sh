@@ -21,6 +21,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 #Detect Package manager
+echo "==> Installing Git"
 if $APT;then
     sudo apt install git
 elif $PACMAN; then
@@ -33,21 +34,22 @@ fi
 
 echo "==> Setting symlinks"
 MYDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-ln -nfs $MYDIR/.tmux.conf $HOME/.tmux.conf
-ln -nfs $MYDIR/.bashrc $HOME/.bashrc
-ln -nfs $MYDIR/.bash_profile $HOME/.bash_profile
-ln -nfs $MYDIR/.vimrc $HOME/.vimrc
-ln -nfs $MYDIR/.gitconfig $HOME/.gitconfig
-ln -nfs $MYDIR/.inputrc $HOME/.inputrc
-ln -nfs $MYDIR/fish/ $HOME/.config/fish
+RC_DIR=$MYDIR/rcfiles
+ln -nfs $RC_DIR/.tmux.conf $HOME/.tmux.conf
+ln -nfs $RC_DIR/.bashrc $HOME/.bashrc
+ln -nfs $RC_DIR/.bash_profile $HOME/.bash_profile
+ln -nfs $RC_DIR/.vimrc $HOME/.vimrc
+ln -nfs $RC_DIR/.gitconfig $HOME/.gitconfig
+ln -nfs $RC_DIR/.inputrc $HOME/.inputrc
+ln -nfs $RC_DIR/fish/ $HOME/.config/fish
 mkdir -p $HOME/.config/alacritty
-ln -nfs $MYDIR/alacritty.yml $HOME/.config/alacritty/alacritty.yml
-ln -nfs  $MYDIR/.vim/ $HOME/.vim
+ln -nfs $RC_DIR/alacritty.yml $HOME/.config/alacritty/alacritty.yml
+ln -nfs  $RC_DIR/.vim/ $HOME/.vim
 
 
 mkdir -p $HOME/.rc.d
 chmod 700 $HOME/.rc.d
-for file in $(find $MYDIR/.rc.d -type f);do
+for file in $(find $RC_DIR/.rc.d -type f);do
     ln -nfs $file $HOME/.rc.d/$(basename -- $file)
 done
 
@@ -58,7 +60,7 @@ if [ ! "$(ls -A $TMUX_PLUG_DIR/tpm)" ]; then
     git clone https://github.com/tmux-plugins/tpm $TMUX_PLUG_DIR/tpm
 fi
 
-echo "==> Installing Tools:"
+echo "==> Installing Tools"
 if $APT;then
     sudo apt install keychain socat tmux vim -y
 elif $PACMAN; then
@@ -67,11 +69,11 @@ fi
 
 if [ $INSTALL_ZSH == true ]; then
     echo "==> Installing ZSH and OhMyZSH"
-    ln -nfs $MYDIR/.zshrc $HOME/.zshrc
+    ln -nfs $RC_DIR/.zshrc $HOME/.zshrc
     if $APT;then
         sudo apt install zsh -y
     elif $PACMAN; then
         sudo pacman -S zsh --noconfirm
     fi
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 fi
