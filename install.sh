@@ -4,6 +4,7 @@ set -e
 
 POSITIONAL_ARGS=()
 INSTALL_ZSH=false
+INSTALL_NVIM=false
 
 command -v apt &> /dev/null && APT=true || APT=false
 command -v pacman &> /dev/null && PACMAN=true || PACMAN=false
@@ -12,6 +13,8 @@ while [[ $# -gt 0 ]]; do
     case $1 in
     -z|--zsh)
         INSTALL_ZSH=true;shift;;
+    -n|--nvim)
+        INSTALL_NVIM=true;shift;;
     -*|--*)
         echo "Unknown option $1"
         exit 1;;
@@ -23,7 +26,7 @@ done
 #Detect Package manager
 echo "==> Installing Git"
 if $APT;then
-    sudo apt install git
+    sudo apt -qq install git
 elif $PACMAN; then
     sudo pacman -S git --noconfirm
 else
@@ -31,6 +34,9 @@ else
     exit 1
 fi
 
+if [ ! -z $XDG_CONFIG_HOME ]; then
+    XDG_CONFIG_HOME=$HOME/.config
+fi
 
 echo "==> Setting symlinks"
 MYDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -41,10 +47,10 @@ ln -nfs $RC_DIR/.bash_profile $HOME/.bash_profile
 ln -nfs $RC_DIR/.vimrc $HOME/.vimrc
 ln -nfs $RC_DIR/.gitconfig $HOME/.gitconfig
 ln -nfs $RC_DIR/.inputrc $HOME/.inputrc
-ln -nfs $RC_DIR/fish/ $HOME/.config/fish
-mkdir -p $HOME/.config/alacritty
-ln -nfs $RC_DIR/alacritty.yml $HOME/.config/alacritty/alacritty.yml
-ln -nfs  $RC_DIR/.vim/ $HOME/.vim
+ln -nfs $RC_DIR/fish $XDG_CONFIG_HOME/fish
+mkdir -p $XDG_CONFIG_HOME/alacritty
+ln -nfs $RC_DIR/alacritty.yml $XDG_CONFIG_HOME/alacritty/alacritty.yml
+ln -nfs  $RC_DIR/.vim $HOME/.vim
 
 
 mkdir -p $HOME/.rc.d
@@ -62,7 +68,7 @@ fi
 
 echo "==> Installing Tools"
 if $APT;then
-    sudo apt install keychain socat tmux vim -y
+    sudo apt -qq install keychain socat tmux vim -y
 elif $PACMAN; then
     sudo pacman -S keychain tmux vim socat --noconfirm
 fi
@@ -71,9 +77,24 @@ if [ $INSTALL_ZSH == true ]; then
     echo "==> Installing ZSH and OhMyZSH"
     ln -nfs $RC_DIR/.zshrc $HOME/.zshrc
     if $APT;then
-        sudo apt install zsh -y
+        sudo apt -qq install zsh -y
     elif $PACMAN; then
         sudo pacman -S zsh --noconfirm
     fi
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+fi
+
+if [ $INSTALL_NVIM == true ]; then
+    echo "==> Installing Nvim"
+    ln -nfs $RC_DIR/nvim $XDG_CONFIG_HOME/nvim
+    if $APT;then
+        sudo apt -qq install neovim ripgrep fd-find -y
+    elif $PACMAN; then
+        sudo pacman -S neovim ripgrep fd --noconfirm
+    fi
+    PACKER_PATH=$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
+    if [ ! "$(ls -A $PACKER_PATH)" ]; then
+        echo "===> Cloning Packer"
+        git clone --depth 1 https://github.com/wbthomason/packer.nvim $PACKER_PATH
+    fi
 fi
