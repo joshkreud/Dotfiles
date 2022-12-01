@@ -1,10 +1,9 @@
 require("josh.settings")
-require("josh.packer")
+require("josh.plugins")
+require("josh.plguins_setup")
+require("josh.autocmds")
+require("josh.keymap")
 
-
-local telescope = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', telescope.find_files, {})
-vim.keymap.set('n', '<leader>fg', telescope.live_grep, {})
-vim.keymap.set('n', '<leader>fb', telescope.buffers, {})
-vim.keymap.set('n', '<leader>fh', telescope.help_tags, {})
-require('telescope').load_extension('fzf')
+-- Colorscheme
+vim.o.background = "dark" -- or "light" for light mode
+vim.cmd([[colorscheme gruvbox]])

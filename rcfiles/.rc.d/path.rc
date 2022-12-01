@@ -1,0 +1,7 @@
+FOLDERS=$HOME/.cargo/bin
+
+for folder in $FOLDERS; do
+    if [ -d $folder ]; then
+        export PATH=$PATH:$folder
+    fi
+done
