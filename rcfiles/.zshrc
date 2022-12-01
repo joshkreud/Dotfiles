@@ -13,6 +13,6 @@ unset zle_bracketed_paste
 
 source $ZSH/oh-my-zsh.sh
 
-for file in $(find .rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name "*.zshrc" \)); do
+for file in $(find $HOME/.rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name "*.zshrc" \)); do
   source "$file"
 done
