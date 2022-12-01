@@ -6,6 +6,8 @@
 bash install.sh
 ```
 
+Please also install a Nerdfont for CLI symbols: https://www.nerdfonts.com:q
+
 # Custom Commands
 
 Some commands will be added to PATH
