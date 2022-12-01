@@ -14,7 +14,7 @@ HYPHEN_INSENSITIVE="true"
 
 zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
-plugins=(git poetry git safe-paste)
+plugins=(git poetry git safe-paste fzf)
 
 unset zle_bracketed_paste
 

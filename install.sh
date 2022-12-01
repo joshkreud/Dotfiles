@@ -76,9 +76,9 @@ fi
 if [ $INSTALL_ZSH == true ]; then
     echo "==> Installing ZSH and OhMyZSH"
     if $APT;then
-        sudo apt -qq install zsh -y
+        sudo apt -qq install zsh fzf -y
     elif $PACMAN; then
-        sudo pacman -S zsh --noconfirm
+        sudo pacman -S zsh fzf --noconfirm
     fi
 
     [ -z $ZSH ] && echo "===> Installing OhMyZsh" && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
