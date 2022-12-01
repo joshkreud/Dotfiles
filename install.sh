@@ -34,7 +34,7 @@ else
     exit 1
 fi
 
-if [ ! -z $XDG_CONFIG_HOME ]; then
+if [ -z $XDG_CONFIG_HOME ]; then
     XDG_CONFIG_HOME=$HOME/.config
 fi
 
@@ -75,13 +75,13 @@ fi
 
 if [ $INSTALL_ZSH == true ]; then
     echo "==> Installing ZSH and OhMyZSH"
-    ln -nfs $RC_DIR/.zshrc $HOME/.zshrc
     if $APT;then
         sudo apt -qq install zsh -y
     elif $PACMAN; then
         sudo pacman -S zsh --noconfirm
     fi
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    ln -nfs $RC_DIR/.zshrc $HOME/.zshrc
 fi
 
 if [ $INSTALL_NVIM == true ]; then
@@ -97,4 +97,5 @@ if [ $INSTALL_NVIM == true ]; then
         echo "===> Cloning Packer"
         git clone --depth 1 https://github.com/wbthomason/packer.nvim $PACKER_PATH
     fi
+    
 fi
