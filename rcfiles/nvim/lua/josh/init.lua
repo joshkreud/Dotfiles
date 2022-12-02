@@ -1,6 +1,6 @@
 require("josh.settings")
 require("josh.plugins")
-require("josh.plguins_setup")
+require("josh.plugins_setup")
 require("josh.autocmds")
 require("josh.keymap")
 
