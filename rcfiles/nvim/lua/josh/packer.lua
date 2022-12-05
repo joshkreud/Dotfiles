@@ -42,9 +42,6 @@ return require('packer').startup(function(use)
         },
         extensions = {
           repo = {
-            settings = {
-              auto_lcd = true,
-            },
             list = {
               fd_opts = {
                 "--no-ignore-vcs",
