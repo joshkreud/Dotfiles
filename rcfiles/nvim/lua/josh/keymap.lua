@@ -10,15 +10,23 @@ end
 
 vim.g.mapleader = " " -- Leader key Space
 
-map('n', '<leader>r', ':RunCode<CR>', { noremap = true, silent = false })
-map('n', '<leader>rf', ':RunFile<CR>', { noremap = true, silent = false })
-map('n', '<leader>rft', ':RunFile tab<CR>', { noremap = true, silent = false })
-map('n', '<leader>rp', ':RunProject<CR>', { noremap = true, silent = false })
-map('n', '<leader>rc', ':RunClose<CR>', { noremap = true, silent = false })
-map('n', '<leader>crf', ':CRFiletype<CR>', { noremap = true, silent = false })
-map('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent = false })
+-- Global Remaps
+map('n', "<C-d>","<C-d>zz") -- Center Cursor vert after skip half page
+map('n', "<C-u>","<C-u>zz") -- Center cursor vert after skip half page
 
+-- Fugitive
+map('n', "<leader>gs", "<cmd>:Git<CR>")
 
+-- Code Runner
+map('n', '<leader>r', ':RunCode<CR>', { silent = false })
+map('n', '<leader>rf', ':RunFile<CR>', { silent = false })
+map('n', '<leader>rft', ':RunFile tab<CR>', { silent = false })
+map('n', '<leader>rp', ':RunProject<CR>', { silent = false })
+map('n', '<leader>rc', ':RunClose<CR>', { silent = false })
+map('n', '<leader>crf', ':CRFiletype<CR>', { silent = false })
+map('n', '<leader>crp', ':CRProjects<CR>', { silent = false })
+
+-- Telescope
 map('n', '<leader>ff', ":Telescope find_files<CR>")
 map('n', '<leader>fg', ":Telescope live_grep<CR>")
 map('n', '<leader>fb', ":Telescope buffers<CR>")
