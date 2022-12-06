@@ -110,42 +110,57 @@ return require('packer').startup(function(use)
   use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' }
 
   -- Git
-  use "tpope/vim-fugitive"
+  use { "tpope/vim-fugitive" }
   use {
-    'lewis6991/gitsigns.nvim',
-    config = function() require('gitsigns').setup() end
+      'lewis6991/gitsigns.nvim',
+      config = function() require('gitsigns').setup() end
   }
 
   -- Buffer
   use {
-    'akinsho/bufferline.nvim',
-    tag = "v3.*",
-    requires = 'nvim-tree/nvim-web-devicons',
-    config = function() require("bufferline").setup() end
+      'akinsho/bufferline.nvim',
+      tag = "v3.*",
+      requires = 'nvim-tree/nvim-web-devicons',
+      config = function() require("bufferline").setup() end
   }
 
   -- Wildmenu
   use {
-    'gelguy/wilder.nvim',
-    config = function()
-      require("wilder").setup({ modes = { ':', '/', '?' } })
-    end
+      'gelguy/wilder.nvim',
+      config = function()
+          require("wilder").setup({ modes = { ':', '/', '?' } })
+      end
+  }
 
+  -- LSP
+  use { "neovim/nvim-lspconfig" }
+  use {
+      "williamboman/mason.nvim",
+      config = function() require("mason").setup() end
+  }
+  use {
+      "williamboman/mason-lspconfig.nvim",
+      config = function() require("mason-lspconfig").setup() end
+  }
+  use { 'folke/lsp-colors.nvim' }
+  use {
+    'folke/trouble.nvim',
+    config = function() require("trouble").setup() end
   }
 
   -- Treesitter
   use {
-    'nvim-treesitter/nvim-treesitter',
-    run = function()
-      require('nvim-treesitter.configs').setup {
-        ensure_installed = { "c", "lua", "python", "yaml" },
-        auto_install = true,
-      }
-      local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
-      ts_update()
-    end,
+      'nvim-treesitter/nvim-treesitter',
+      run = function()
+          require('nvim-treesitter.configs').setup {
+              ensure_installed = { "c", "lua", "python", "yaml" },
+              auto_install = true,
+          }
+          local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+          ts_update()
+      end,
   }
   if packer_bootstrap then
-    require('packer').sync()
+      require('packer').sync()
   end
 end)
