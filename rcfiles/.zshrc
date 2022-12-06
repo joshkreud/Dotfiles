@@ -14,7 +14,7 @@ HYPHEN_INSENSITIVE="true"
 
 zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
-plugins=(git poetry git safe-paste fzf)
+plugins=(git poetry git safe-paste fzf colored-man-pages)
 
 unset zle_bracketed_paste
 
