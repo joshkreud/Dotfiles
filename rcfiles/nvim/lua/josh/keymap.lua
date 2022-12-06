@@ -13,6 +13,8 @@ vim.g.mapleader = " " -- Leader key Space
 -- Global Remaps
 map('n', "<C-d>","<C-d>zz") -- Center Cursor vert after skip half page
 map('n', "<C-u>","<C-u>zz") -- Center cursor vert after skip half page
+map('n', "<C-s>", "<cmd>w<cr>") -- Control S save
+map('i', "<c-s>", "<ESC><cmd>w<cr>a") -- Control s save in insert mode
 
 -- Fugitive
 map('n', "<leader>gs", "<cmd>Git<CR>")
