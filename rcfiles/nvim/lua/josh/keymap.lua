@@ -1,5 +1,4 @@
-local keymap = vim.keymap -- Set options (global/buffer/windows-scoped)
-
+-- Here i map all my custom keys
 local function map(mode, lhs, rhs, opts)
     local options = { noremap = true, silent = true }
     if opts then
@@ -16,6 +15,7 @@ map('n', "<C-u>","<C-u>zz") -- Center cursor vert after skip half page
 map('n', "<C-s>", "<cmd>w<cr>") -- Control S save
 map('i', "<c-s>", "<ESC><cmd>w<cr>a") -- Control s save in insert mode
 map('v', "<c-s>", "<ESC><cmd>w<cr>") -- Control s save in insert mode
+map('n', "<leader>sv", "<cmd>luafile $MYVIMRC<cr>") -- Resource lua config
 
 -- Fugitive
 map('n', "<leader>gs", "<cmd>Git<CR>")
