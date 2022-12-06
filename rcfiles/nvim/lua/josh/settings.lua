@@ -4,7 +4,6 @@ local opt = vim.opt -- Set options (global/buffer/windows-scoped)
 -----------------------------------------------------------
 -- General
 -----------------------------------------------------------
-opt.guicursor = ""
 opt.mouse = 'a' -- Enable mouse support
 opt.clipboard = 'unnamedplus' -- Copy/paste to system clipboard
 opt.swapfile = false -- Don't use swapfile
@@ -12,12 +11,14 @@ opt.completeopt = 'menuone,noinsert,noselect' -- Autocomplete options
 opt.backup = false
 opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 opt.undofile = true
+vim.cmd "set noshowmode" -- hide --insert-- in bottom bar (for lualine)
+vim.cmd "set cursorline" -- highlight current cursor
 
 -----------------------------------------------------------
 -- File Explorer
 -----------------------------------------------------------
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1 --Disable netrw for nvim-tree
+vim.g.loaded_netrwPlugin = 1 -- disable netrw for nvim-tree
 
 -----------------------------------------------------------
 -- Editor
@@ -29,7 +30,7 @@ opt.scrolloff = 8
 opt.termguicolors = true -- Enable 24-bit RGB colors
 opt.colorcolumn = "120"
 opt.incsearch = true -- Incremental search
-opt.hlsearch = true
+opt.hlsearch = true -- Highlight search while typing
 
 -----------------------------------------------------------
 -- Tabs, indent

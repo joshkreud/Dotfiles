@@ -22,6 +22,13 @@ return require('packer').startup(function(use)
     config = function() require("impatient") end
   }
 
+  -- Editor
+  use { "matze/vim-move" } -- Move lines wiht a-j/k
+
+  use { 'RRethy/vim-illuminate' } -- highlght current word
+
+  use { 'lukas-reineke/indent-blankline.nvim' } -- show indent guides
+
   -- Themes
   use { 'nvim-tree/nvim-web-devicons' }
   use { "gruvbox-community/gruvbox" }
@@ -111,56 +118,137 @@ return require('packer').startup(function(use)
 
   -- Git
   use { "tpope/vim-fugitive" }
-  use {
-      'lewis6991/gitsigns.nvim',
-      config = function() require('gitsigns').setup() end
+  use { -- Side bar, showing current git changes
+    'lewis6991/gitsigns.nvim',
+    config = function() require('gitsigns').setup() end
   }
 
-  -- Buffer
+  -- Tab bar for open buffers at the top
   use {
-      'akinsho/bufferline.nvim',
-      tag = "v3.*",
-      requires = 'nvim-tree/nvim-web-devicons',
-      config = function() require("bufferline").setup() end
+    'akinsho/bufferline.nvim',
+    tag = "v3.*",
+    requires = 'nvim-tree/nvim-web-devicons',
+    config = function() require("bufferline").setup() end
   }
 
-  -- Wildmenu
+  -- Wildmenu (command mode preview)
   use {
-      'gelguy/wilder.nvim',
-      config = function()
-          require("wilder").setup({ modes = { ':', '/', '?' } })
-      end
+    'gelguy/wilder.nvim',
+    config = function()
+      require("wilder").setup({ modes = { ':', '/', '?' } })
+    end
   }
 
   -- LSP
-  use { "neovim/nvim-lspconfig" }
   use {
-      "williamboman/mason.nvim",
-      config = function() require("mason").setup() end
+    "neovim/nvim-lspconfig",
+    config = function()
+      local lspconfig = require('lspconfig')
+      lspconfig.sumneko_lua.setup {
+        settings = {
+          Lua = {
+            runtime = {
+              version = 'LuaJIT',
+            },
+            diagnostics = {
+              globals = { 'vim' },
+            },
+            workspace = {
+              library = vim.api.nvim_get_runtime_file("", true),
+              checkThirdParty = false,
+            },
+            telemetry = {
+              enable = false,
+            },
+          },
+        },
+      }
+    end
+  }
+
+  use { -- Used to install LSPs
+    "williamboman/mason.nvim",
+    config = function() require("mason").setup() end
   }
   use {
-      "williamboman/mason-lspconfig.nvim",
-      config = function() require("mason-lspconfig").setup() end
+    "williamboman/mason-lspconfig.nvim",
+    config = function() require("mason-lspconfig").setup() end
   }
-  use { 'folke/lsp-colors.nvim' }
-  use {
+  use { 'folke/lsp-colors.nvim' } -- Colors in case the theme doesnt support it
+  use { -- 'Problems' bar for Nvim
     'folke/trouble.nvim',
     config = function() require("trouble").setup() end
   }
+  -- Autocomplete
+  use {
+    "hrsh7th/nvim-cmp",
+    requires = {
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-nvim-lsp",
+      'hrsh7th/cmp-nvim-lua',
+      'octaltree/cmp-look',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-calc',
+      'f3fora/cmp-spell',
+      'hrsh7th/cmp-emoji'
+    },
+    config = function()
+      local cmp = require('cmp')
+
+      cmp.setup({
+        mapping = cmp.mapping.preset.insert({
+          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<C-e>'] = cmp.mapping.abort(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        }),
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+        }, {
+          { name = 'buffer' },
+        })
+      })
+
+      cmp.setup.cmdline({ '/', '?' }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = 'buffer' }
+        }
+      })
+
+      -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = 'path' }
+        }, {
+          { name = 'cmdline' }
+        })
+      })
+
+      -- Set up lspconfig.
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+      require('lspconfig')['sumneko_lua'].setup {
+        capabilities = capabilities
+      }
+    end
+  }
+
 
   -- Treesitter
   use {
-      'nvim-treesitter/nvim-treesitter',
-      run = function()
-          require('nvim-treesitter.configs').setup {
-              ensure_installed = { "c", "lua", "python", "yaml" },
-              auto_install = true,
-          }
-          local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
-          ts_update()
-      end,
+    'nvim-treesitter/nvim-treesitter',
+    run = function()
+      require('nvim-treesitter.configs').setup {
+        ensure_installed = { "c", "lua", "python", "yaml" },
+        auto_install = true,
+      }
+      local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+      ts_update()
+    end,
   }
   if packer_bootstrap then
-      require('packer').sync()
+    require('packer').sync()
   end
 end)
