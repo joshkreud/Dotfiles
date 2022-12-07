@@ -33,9 +33,8 @@ return require('packer').startup(function(use)
   use 'nvim-tree/nvim-web-devicons'
   use "gruvbox-community/gruvbox"
 
-  use 'airblade/vim-rooter' -- Set root folder on file change
-
   -- Telescope
+  use 'airblade/vim-rooter' -- Set root folder on file change
   use {
     'nvim-telescope/telescope.nvim',
     requires = { 'nvim-lua/plenary.nvim', 'cljoly/telescope-repo.nvim' },
@@ -125,9 +124,18 @@ return require('packer').startup(function(use)
 
   -- Git
   use { "tpope/vim-fugitive" }
+  use {
+    'petertriho/nvim-scrollbar',
+    config = function()
+      require("scrollbar").setup()
+    end
+  }
   use { -- Side bar, showing current git changes
     'lewis6991/gitsigns.nvim',
-    config = function() require('gitsigns').setup() end
+    config = function()
+      require('gitsigns').setup()
+      require("scrollbar.handlers.gitsigns").setup()
+    end
   }
 
   -- Tab bar for open buffers at the top
