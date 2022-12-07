@@ -23,15 +23,15 @@ return require('packer').startup(function(use)
   }
 
   -- Editor
-  use { "matze/vim-move" } -- Move lines wiht a-j/k
+  use "matze/vim-move" -- Move lines wiht a-j/k
 
-  use { 'RRethy/vim-illuminate' } -- highlght current word
+  use 'RRethy/vim-illuminate' -- highlght current word
 
-  use { 'lukas-reineke/indent-blankline.nvim' } -- show indent guides
+  use 'lukas-reineke/indent-blankline.nvim' -- show indent guides
 
   -- Themes
-  use { 'nvim-tree/nvim-web-devicons' }
-  use { "gruvbox-community/gruvbox" }
+  use 'nvim-tree/nvim-web-devicons'
+  use "gruvbox-community/gruvbox"
 
   use 'airblade/vim-rooter' -- Set root folder on file change
 
@@ -107,6 +107,13 @@ return require('packer').startup(function(use)
     config = function() require("nvim-autopairs").setup {} end
   }
 
+  -- Comment toggeling
+  use {
+    'numToStr/Comment.nvim',
+    config = function()
+      require('Comment').setup()
+    end
+  }
   -- Powerline
   use {
     'nvim-lualine/lualine.nvim',
