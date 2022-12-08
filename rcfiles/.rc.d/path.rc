@@ -1,4 +1,4 @@
-FOLDERS=$HOME/.cargo/bin
+FOLDERS=("$HOME/.cargo/bin" "$HOME/.local/bin")
 
 for folder in $FOLDERS; do
     if [ -d $folder ]; then
