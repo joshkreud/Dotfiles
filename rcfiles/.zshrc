@@ -24,5 +24,7 @@ for file in $(find $HOME/.rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name
   source "$file"
 done
 
+unsetopt autocd
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
