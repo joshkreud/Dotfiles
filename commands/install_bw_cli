@@ -1,0 +1,11 @@
+#!/bin/bash
+
+DOWNLOAD_URL="https://vault.bitwarden.com/download/?app=cli&platform=linux"
+
+echo "==> Downloading BW CLI"
+wget -q $DOWNLOAD_URL -O /tmp/bw_cli.zip
+echo "==> Unzipping Archive"
+sudo unzip -o -d /usr/local/sbin /tmp/bw_cli.zip
+echo "==> Fixing Permissions on BW CLI"
+sudo chmod +x /usr/local/sbin/bw
+echo "==> Done Installing BW CLI. (May need shell restart)"
