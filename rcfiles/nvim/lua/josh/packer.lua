@@ -29,6 +29,8 @@ return require('packer').startup(function(use)
 
   use 'lukas-reineke/indent-blankline.nvim' -- show indent guides
 
+  use 'michaeljsmith/vim-indent-object'
+
   -- Themes
   use 'nvim-tree/nvim-web-devicons'
   use "gruvbox-community/gruvbox"
