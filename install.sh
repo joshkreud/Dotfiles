@@ -6,6 +6,7 @@ POSITIONAL_ARGS=()
 INSTALL_ZSH=false
 INSTALL_NVIM=false
 
+
 command -v apt &> /dev/null && APT=true || APT=false
 command -v pacman &> /dev/null && PACMAN=true || PACMAN=false
 
@@ -38,8 +39,9 @@ if [ -z $XDG_CONFIG_HOME ]; then
     XDG_CONFIG_HOME=$HOME/.config
 fi
 
-echo "==> Setting symlinks"
 MYDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+echo "==> Setting symlinks"
 RC_DIR=$MYDIR/rcfiles
 ln -nfs $RC_DIR/.tmux.conf $HOME/.tmux.conf
 ln -nfs $RC_DIR/.bashrc $HOME/.bashrc
@@ -52,12 +54,16 @@ mkdir -p $XDG_CONFIG_HOME/alacritty
 ln -nfs $RC_DIR/alacritty.yml $XDG_CONFIG_HOME/alacritty/alacritty.yml
 ln -nfs  $RC_DIR/.vim $HOME/.vim
 
-
-mkdir -p $HOME/.rc.d
-chmod 700 $HOME/.rc.d
+RCD_DIR=$HOME/.rc.d
+mkdir -p $RCD_DIR
+chmod 700 $RCD_DIR
 for file in $(find $RC_DIR/.rc.d -type f);do
-    ln -nfs $file $HOME/.rc.d/$(basename -- $file)
+    ln -nfs $file $RCD_DIR/$(basename -- $file)
 done
+
+echo "==> Adding Custom Commands to Path"
+CMD_DIR=$MYDIR/commands
+echo "export PATH=\$PATH:$CMD_DIR" > $RCD_DIR/josh_dotfiles_custom.rc
 
 TMUX_PLUG_DIR=$HOME/.tmux/plugins
 mkdir -p $TMUX_PLUG_DIR
