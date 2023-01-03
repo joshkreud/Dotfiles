@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+TARGET_DIR=$1
+USER_MAIL=$2
+
+[ -z "$TARGET_DIR" ] && echo "=x Must supply target dir in first argument" && exit 1
+[ -z "$USER_MAIL" ] && echo "=x Must supply target email in second argument" && exit 1
+
+GIT_FOLDERS=$(find $TARGET_DIR -type d -name .git )
+
+for folder in $GIT_FOLDERS; do
+  base_dir=$(dirname $folder)
+  echo Setting $USER_MAIL in Git Dir: $base_dir
+  cd $base_dir
+  git config user.email "$USER_MAIL"
+done
