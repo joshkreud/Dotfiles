@@ -27,10 +27,24 @@ return require('packer').startup(function(use)
 
   use 'RRethy/vim-illuminate' -- highlght current word
 
-  use 'lukas-reineke/indent-blankline.nvim' -- show indent guides
+  use { 'lukas-reineke/indent-blankline.nvim',
+    config = function()
+      require('indent_blankline').setup({
+        show_current_context = true,
+        show_current_context_start = true,
+      })
+    end
+  } -- show indent guides
 
   use 'michaeljsmith/vim-indent-object'
-
+  use {
+    "kylechui/nvim-surround",
+    tag = "*",
+    config = function()
+      require("nvim-surround").setup({
+      })
+    end
+  }
   -- Themes
   use 'nvim-tree/nvim-web-devicons'
   use "gruvbox-community/gruvbox"
