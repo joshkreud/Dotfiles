@@ -6,7 +6,7 @@ USER_MAIL=$2
 [ -z "$TARGET_DIR" ] && echo "=x Must supply target dir in first argument" && exit 1
 [ -z "$USER_MAIL" ] && echo "=x Must supply target email in second argument" && exit 1
 
-GIT_FOLDERS=$(find $TARGET_DIR -type d -name .git )
+GIT_FOLDERS=$(find $TARGET_DIR -type d -name .git -exec realpath {} \;)
 
 for folder in $GIT_FOLDERS; do
   base_dir=$(dirname $folder)
