@@ -1,59 +1,56 @@
-vim.cmd [[packadd packer.nvim]]
-
--- Automatically install packer
-local ensure_packer = function()
-  local fn = vim.fn
-  local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-  if fn.empty(fn.glob(install_path)) > 0 then
-    fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
-    vim.cmd [[packadd packer.nvim]]
-    return true
-  end
-  return false
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
 end
+vim.opt.rtp:prepend(lazypath)
 
-local packer_bootstrap = ensure_packer()
 
-return require('packer').startup(function(use)
-  use 'wbthomason/packer.nvim'
-
-  use {
+return require('lazy').setup({
+  {
     'lewis6991/impatient.nvim',
     config = function() require("impatient") end
-  }
+  },
 
   -- Editor
-  use "matze/vim-move" -- Move lines wiht a-j/k
+  "matze/vim-move",        -- Move lines wiht a-j/k
 
-  use 'RRethy/vim-illuminate' -- highlght current word
+  'RRethy/vim-illuminate', -- highlght current word
 
-  use { 'lukas-reineke/indent-blankline.nvim',
+  {
+    'lukas-reineke/indent-blankline.nvim',
     config = function()
       require('indent_blankline').setup({
         show_current_context = true,
         show_current_context_start = true,
       })
     end
-  } -- show indent guides
+  }, -- show indent guides
 
-  use 'michaeljsmith/vim-indent-object'
-  use {
+  'michaeljsmith/vim-indent-object',
+  {
     "kylechui/nvim-surround",
-    tag = "*",
+    tag = "v2.1.0",
     config = function()
       require("nvim-surround").setup({
       })
     end
-  }
+  },
   -- Themes
-  use 'nvim-tree/nvim-web-devicons'
-  use "gruvbox-community/gruvbox"
+  'nvim-tree/nvim-web-devicons',
+  'gruvbox-community/gruvbox',
 
   -- Telescope
-  use 'airblade/vim-rooter' -- Set root folder on file change
-  use {
+  'airblade/vim-rooter', -- Set root folder on file change
+  {
     'nvim-telescope/telescope.nvim',
-    requires = { 'nvim-lua/plenary.nvim', 'cljoly/telescope-repo.nvim' },
+    dependencies = { 'nvim-lua/plenary.nvim', 'cljoly/telescope-repo.nvim' },
     config = function()
       local telescope = require('telescope')
       telescope.setup {
@@ -82,38 +79,33 @@ return require('packer').startup(function(use)
       vim.g['rooter_cd_cmd'] = 'lcd'
       vim.g.rooter_patterns = { '.git', 'Makefile', '*.sln' }
     end
-  }
-  use {
+  },
+  {
     'sudormrfbin/cheatsheet.nvim',
-    requires = {
+    dependencies = {
       { 'nvim-lua/popup.nvim' }
     }
-  }
-  use {
+  },
+  {
     "folke/which-key.nvim",
     config = function()
       require("which-key").setup {
       }
     end
-  }
-  use {
+  },
+  {
     'nvim-telescope/telescope-fzf-native.nvim',
-    run = 'make'
-  }
+    build = 'make'
+  },
 
   -- File Tree
-  use {
+  {
     'nvim-tree/nvim-tree.lua',
     config = function()
       require("nvim-tree").setup({
         sort_by = "case_sensitive",
         view = {
           adaptive_size = true,
-          mappings = {
-            list = {
-              { key = "u", action = "dir_up" },
-            },
-          },
         },
         renderer = {
           group_empty = true,
@@ -121,106 +113,85 @@ return require('packer').startup(function(use)
 
       })
     end
-  }
+  },
 
   -- Auto Brace closing
-  use {
+  {
     "windwp/nvim-autopairs",
     config = function() require("nvim-autopairs").setup {} end
-  }
+  },
 
   -- Comment toggeling
-  use {
+  {
     'numToStr/Comment.nvim',
     config = function()
       require('Comment').setup()
     end
-  }
+  },
   -- Powerline
-  use {
+  {
     'nvim-lualine/lualine.nvim',
     config = function() require('lualine').setup() end
-  }
-
+  },
   -- File executor
-  use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' }
+  { 'CRAG666/code_runner.nvim', dependencies = 'nvim-lua/plenary.nvim' },
 
   -- Git
-  use { "tpope/vim-fugitive" }
-  use {
+  { "tpope/vim-fugitive" },
+  {
     'petertriho/nvim-scrollbar',
     config = function()
       require("scrollbar").setup()
     end
-  }
-  use { -- Side bar, showing current git changes
+  },
+  { -- Side bar, showing current git changes
     'lewis6991/gitsigns.nvim',
     config = function()
       require('gitsigns').setup()
       require("scrollbar.handlers.gitsigns").setup()
     end
-  }
+  },
 
   -- Tab bar for open buffers at the top
-  use {
+  {
     'akinsho/bufferline.nvim',
-    tag = "v3.*",
-    requires = 'nvim-tree/nvim-web-devicons',
+    tag = "v4.1.0",
+    dependencies = 'nvim-tree/nvim-web-devicons',
     config = function() require("bufferline").setup() end
-  }
+  },
 
   -- Wildmenu (command mode preview)
-  use {
+  {
     'gelguy/wilder.nvim',
     config = function()
       require("wilder").setup({ modes = { ':', '/', '?' } })
     end
-  }
+  },
 
   -- LSP
-  use {
+  {
     "neovim/nvim-lspconfig",
     config = function()
       local lspconfig = require('lspconfig')
-      lspconfig.sumneko_lua.setup {
-        settings = {
-          Lua = {
-            runtime = {
-              version = 'LuaJIT',
-            },
-            diagnostics = {
-              globals = { 'vim' },
-            },
-            workspace = {
-              library = vim.api.nvim_get_runtime_file("", true),
-              checkThirdParty = false,
-            },
-            telemetry = {
-              enable = false,
-            },
-          },
-        },
-      }
     end
-  }
-
-  use { -- Used to install LSPs
+  },
+  { -- Used to install LSPs
     "williamboman/mason.nvim",
     config = function() require("mason").setup() end
-  }
-  use {
+  },
+  {
     "williamboman/mason-lspconfig.nvim",
     config = function() require("mason-lspconfig").setup() end
-  }
-  use { 'folke/lsp-colors.nvim' } -- Colors in case the theme doesnt support it
-  use { -- 'Problems' bar for Nvim
+  },
+  'folke/lsp-colors.nvim', -- Colors in case the theme doesnt support it
+  {                        -- 'Problems' bar for Nvim
     'folke/trouble.nvim',
     config = function() require("trouble").setup() end
-  }
+  },
   -- Autocomplete
-  use {
+  {
     "hrsh7th/nvim-cmp",
-    requires = {
+    dependencies = {
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-nvim-lsp",
       'hrsh7th/cmp-nvim-lua',
@@ -275,17 +246,14 @@ return require('packer').startup(function(use)
 
       -- Set up lspconfig.
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
-      require('lspconfig')['sumneko_lua'].setup {
-        capabilities = capabilities
-      }
     end
-  }
+  },
 
 
   -- Treesitter
-  use {
+  {
     'nvim-treesitter/nvim-treesitter',
-    run = function()
+    build = function()
       require('nvim-treesitter.configs').setup {
         ensure_installed = { "c", "lua", "python", "yaml" },
         auto_install = true,
@@ -293,8 +261,5 @@ return require('packer').startup(function(use)
       local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
       ts_update()
     end,
-  }
-  if packer_bootstrap then
-    require('packer').sync()
-  end
-end)
+  },
+})
