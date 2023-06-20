@@ -104,7 +104,6 @@ if [ $INSTALL_NVIM == true ]; then
         sudo pacman -S neovim ripgrep fd rust glow unzip --noconfirm
     fi
     cargo install tree-sitter-cli
-    cargo install glow
 
     PACKER_PATH=$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
     if [ ! "$(ls -A $PACKER_PATH)" ]; then
