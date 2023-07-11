@@ -1,0 +1,3 @@
+[submodule "rcfiles/nvchad"]
+	path = rcfiles/nvchad
+	url = https://github.com/NvChad/NvChad

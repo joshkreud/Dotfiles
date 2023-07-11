@@ -97,17 +97,11 @@ fi
 
 if [ $INSTALL_NVIM == true ]; then
     echo "==> Installing Nvim"
-    ln -nfs $RC_DIR/nvim $XDG_CONFIG_HOME/nvim
+    ln -nfs $RC_DIR/nvchad $XDG_CONFIG_HOME/nvim
+    rm -rf $HOME/.local/share/nvim/
     if $APT;then
-        sudo apt -qq install neovim ripgrep fd-find cargo unzip -y
+        sudo apt -qq install neovim ripgrep fd-find unzip -y
     elif $PACMAN; then
         sudo pacman -S neovim ripgrep fd rust glow unzip --noconfirm
-    fi
-    cargo install tree-sitter-cli
-
-    PACKER_PATH=$HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
-    if [ ! "$(ls -A $PACKER_PATH)" ]; then
-        echo "===> Cloning Packer"
-        git clone --depth 1 https://github.com/wbthomason/packer.nvim $PACKER_PATH
     fi
 fi
