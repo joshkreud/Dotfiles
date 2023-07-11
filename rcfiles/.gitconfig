@@ -1,6 +1,8 @@
 [user]
     name = Joshua Kreuder
     email = joshua.kreuder@wetech.de
+[pull]
+    rebase = true
 [push]
     default = simple
 [core]
