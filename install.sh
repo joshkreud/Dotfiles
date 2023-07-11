@@ -90,9 +90,6 @@ if [ $INSTALL_ZSH == true ]; then
     [ -z $ZSH ] && echo "===> Installing OhMyZsh" && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     ln -nfs $RC_DIR/.zshrc $HOME/.zshrc
 
-    POWERLEVEL_FOLDER=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-    [ ! -d $POWERLEVEL_FOLDER ] && echo "===> Installing Powerlevel10k" && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $POWERLEVEL_FOLDER
-    ln -nfs $RC_DIR/.p10k.zsh $HOME/.p10k.zsh
 fi
 
 if [ $INSTALL_NVIM == true ]; then
