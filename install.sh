@@ -95,7 +95,9 @@ fi
 if [ $INSTALL_NVIM == true ]; then
     echo "==> Installing Nvim"
     ln -nfs $RC_DIR/nvchad $XDG_CONFIG_HOME/nvim
+    ln -nfs $RC_DIR/nvchad_custom $XDG_CONFIG_HOME/nvim/lua/custom
     rm -rf $HOME/.local/share/nvim/
+
     if $APT;then
         sudo apt -qq install neovim ripgrep fd-find unzip -y
     elif $PACMAN; then
