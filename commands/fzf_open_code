@@ -1,0 +1,29 @@
+#!/bin/bash
+
+CACHE_FILE="$HOME/.cache/git-dirs"
+
+# add a -f flag to this script, to ship the cache file
+if [[ "$1" == "-f" ]]; then
+    rm "$CACHE_FILE"
+fi
+
+if [[ -f "$CACHE_FILE" && $(find "$CACHE_FILE" -mmin -60) ]]; then
+  DIRS=$(cat "$CACHE_FILE")
+else
+  DIRS=$(find ~/dev -type d -name '.git' -printf '%h\n' )
+  echo "$DIRS" > "$CACHE_FILE"
+fi
+
+DIR=$(echo "$DIRS" | fzf)
+
+# If dir is empty exit
+if [[ -z "$DIR" ]]; then
+  exit 0
+fi
+
+# if dir contains devcontainer.json open in devcontainer else vscode
+if [[ -f "$DIR/.devcontainer/devcontainer.json" ]]; then
+  devcontainer open "$DIR"
+else
+  code "$DIR"
+fi
