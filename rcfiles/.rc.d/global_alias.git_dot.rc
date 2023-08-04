@@ -2,6 +2,9 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 alias lh='ls -lha'
+if command -v fdfind >/dev/null 2>&1;
+    alias fd='fdfind'
+fi
 alias sudo="sudo " #Preserve Aliases in sudo
 alias docker-compose='docker compose'
 alias ddup='docker-compose up -d'

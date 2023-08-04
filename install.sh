@@ -74,9 +74,9 @@ fi
 
 echo "==> Installing Tools"
 if $APT;then
-    sudo apt -qq install keychain socat tmux vim -y
+    sudo apt -qq install keychain socat tmux vim fd-find -y
 elif $PACMAN; then
-    sudo pacman -S keychain tmux vim socat --noconfirm
+    sudo pacman -S keychain tmux vim socat fd --noconfirm
 fi
 
 if [ $INSTALL_ZSH == true ]; then

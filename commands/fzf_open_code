@@ -1,18 +1,17 @@
 #!/bin/bash
 
-CACHE_FILE="$HOME/.cache/git-dirs"
-
 STDOUT=0
+
+set -e
+
+#set fd to fd or fdfind depending on which is installed
+command -v fdfind &> /dev/null && fd=fdfind || fd=fd
 
 # handle mutliple commandline flags -f -h and -c
 while getopts ":fhs" opt; do
   case $opt in
-    f)
-      rm "$CACHE_FILE"
-      ;;
     h)
       echo "Usage: fzf_open_code [-f] [-h] [-c]"
-      echo "  -f: force refresh of cache file"
       echo "  -h: show this help message"
       echo "  -s: pass to stdout instead of opening in vscode"
       exit 0
@@ -27,18 +26,12 @@ while getopts ":fhs" opt; do
   esac
 done
 
-if [[ -f "$CACHE_FILE" && $(find "$CACHE_FILE" -mmin -60) ]]; then
-  DIRS=$(cat "$CACHE_FILE")
-else
-  DIRS=$(find ~/dev -type d -name '.git' -printf '%h\n' )
-  echo "$DIRS" > "$CACHE_FILE"
-fi
-
+DIRS=$($fd -t d -i -H "^.git$" -E '.github' ~/dev | sed 's/......$//')
 DIR=$(echo "$DIRS" | fzf)
 
 # If dir is empty exit
 if [[ -z "$DIR" ]]; then
-  exit 0
+  exit 1
 fi
 
 if [[ $STDOUT -eq 1 ]]; then
