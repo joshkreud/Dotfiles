@@ -27,7 +27,13 @@ while getopts ":fhs" opt; do
 done
 
 DIRS=$($fd -t d -i -H "^.git$" -E '.github' ~/dev | sed 's/......$//')
-DIR=$(echo "$DIRS" | fzf)
+results=()
+for dir in $DIRS; do
+  branch=$(git -C "$dir" rev-parse --abbrev-ref HEAD || echo "error")
+  results+=("$dir:$branch")
+done
+DIR=$(printf '%s\n' "${results[@]}" | fzf --preview='git -C $(echo {} | cut -d: -f1) status' --preview-window=right:50%)
+DIR=$(echo $DIR | cut -d: -f1)
 
 # If dir is empty exit
 if [[ -z "$DIR" ]]; then
