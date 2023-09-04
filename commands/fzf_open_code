@@ -29,7 +29,7 @@ done
 DIRS=$($fd -t d -i -H "^.git$" -E '.github' ~/dev | sed 's/......$//')
 results=()
 for dir in $DIRS; do
-  branch=$(git -C "$dir" rev-parse --abbrev-ref HEAD || echo "error")
+  branch=$(git -C "$dir" branch --show-current )
   results+=("$dir:$branch")
 done
 DIR=$(printf '%s\n' "${results[@]}" | fzf --preview='git -C $(echo {} | cut -d: -f1) status' --preview-window=right:50%)
