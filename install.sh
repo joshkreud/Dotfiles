@@ -89,8 +89,10 @@ if [ $INSTALL_ZSH == true ]; then
         sudo pacman -S zsh fzf --noconfirm
     fi
 
-    [ -z $ZSH ] && echo "===> Installing OhMyZsh" && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    [ -z $ZSH ] && echo "===> Installing OhMyZsh" && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || true
     ln -nfs $RC_DIR/.zshrc $HOME/.zshrc
+
+    chsh -s $(which zsh)
 
 fi
 
