@@ -6,6 +6,10 @@ POSITIONAL_ARGS=()
 INSTALL_ZSH=false
 INSTALL_NVIM=false
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+cd $SCRIPT_DIR
+
+git submodule update --init
 
 command -v apt &> /dev/null && APT=true || APT=false
 command -v pacman &> /dev/null && PACMAN=true || PACMAN=false
@@ -27,9 +31,10 @@ done
 #Detect Package manager
 echo "==> Installing Git"
 if $APT;then
-    sudo apt -qq install git
+    sudo apt update --fix-missing
+    sudo apt -qq install git gcc -y
 elif $PACMAN; then
-    sudo pacman -S git --noconfirm
+    sudo pacman -S git gcc --noconfirm
 else
     echo "This script requires Pacman or Apt to work"
     exit 1
@@ -44,7 +49,7 @@ fi
 
 
 echo "==> Setting symlinks"
-RC_DIR=$MYDIR/rcfiles
+RC_DIR=$SCRIPT_DIR/rcfiles
 ln -nfs $RC_DIR/.tmux.conf $HOME/.tmux.conf
 ln -nfs $RC_DIR/.bashrc $HOME/.bashrc
 ln -nfs $RC_DIR/.bash_profile $HOME/.bash_profile
@@ -64,7 +69,7 @@ for file in $(find $RC_DIR/.rc.d -type f);do
 done
 
 echo "==> Adding Custom Commands to Path"
-CMD_DIR=$MYDIR/commands
+CMD_DIR=$SCRIPT_DIR/commands
 echo "export PATH=\$PATH:$CMD_DIR" > $RCD_DIR/josh_dotfiles_custom.rc
 
 TMUX_PLUG_DIR=$HOME/.tmux/plugins
@@ -109,3 +114,5 @@ if [ $INSTALL_NVIM == true ]; then
         sudo pacman -S neovim ripgrep fd rust glow unzip --noconfirm
     fi
 fi
+
+echo "Done Installing JoshKreud Dotfiles"
