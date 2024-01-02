@@ -103,6 +103,7 @@ if [ $INSTALL_NVIM == true ]; then
     rm -rf $HOME/.local/share/nvim/
 
     if $APT;then
+        sudo add-apt-repository ppa:neovim-ppa/unstable -y
         sudo apt -qq install neovim ripgrep fd-find unzip -y
     elif $PACMAN; then
         sudo pacman -S neovim ripgrep fd rust glow unzip --noconfirm
