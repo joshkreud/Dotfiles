@@ -38,8 +38,10 @@ fi
 if [ -z $XDG_CONFIG_HOME ]; then
     XDG_CONFIG_HOME=$HOME/.config
 fi
+if [ ! -d $XDG_CONFIG_HOME ]; then
+    mkdir -p $XDG_CONFIG_HOME
+fi
 
-MYDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 echo "==> Setting symlinks"
 RC_DIR=$MYDIR/rcfiles
