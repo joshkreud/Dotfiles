@@ -1,0 +1,13 @@
+#!/bin/bash
+# Script to call Windows Explorer from WSL CLI. Takes an optional argument for the directory to open.
+# If no argument is provided, the current directory is opened.
+
+CH_DIR=$1
+if [ -n "$CH_DIR" ]; then
+  if [ -f "$CH_DIR" ]; then
+    CH_DIR=$(dirname "$CH_DIR")
+  fi
+  cd "$CH_DIR"
+fi
+
+explorer.exe .
