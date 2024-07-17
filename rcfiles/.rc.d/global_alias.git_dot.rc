@@ -22,3 +22,5 @@ alias clip='wl-copy'
 alias fp='cd $(fzf_open_code -s)'
 alias fc='fzf_open_code'
 alias oe='wsl_open_explorer'
+alias bw-open='$(bw unlock | grep "^\$ export" | cut -c 3-)'
+
