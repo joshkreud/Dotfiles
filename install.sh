@@ -13,6 +13,7 @@ git submodule update --init
 
 command -v apt &> /dev/null && APT=true || APT=false
 command -v pacman &> /dev/null && PACMAN=true || PACMAN=false
+command -v brew &> /dev/null && BREW=true || BREW=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -35,6 +36,8 @@ if $APT;then
     sudo apt -qq install git gcc -y
 elif $PACMAN; then
     sudo pacman -S git gcc --noconfirm
+elif $BREW; then
+    brew install git gcc
 else
     echo "This script requires Pacman or Apt to work"
     exit 1
@@ -84,6 +87,8 @@ if $APT;then
     sudo apt -qq install keychain socat tmux vim fd-find -y
 elif $PACMAN; then
     sudo pacman -S keychain tmux vim socat fd --noconfirm
+elif $BREW; then
+    brew install keychain tmux vim socat fd
 fi
 
 if [ $INSTALL_ZSH == true ]; then
@@ -92,13 +97,17 @@ if [ $INSTALL_ZSH == true ]; then
         sudo apt -qq install zsh fzf -y
     elif $PACMAN; then
         sudo pacman -S zsh fzf --noconfirm
+    elif $BREW; then
+        brew install zsh fzf
     fi
 
     [ -z $ZSH ] && echo "===> Installing OhMyZsh" && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || true
     ln -nfs $RC_DIR/.zshrc $HOME/.zshrc
 
-    chsh -s $(which zsh)
-
+    if [[ $SHELL != */zsh ]]; then
+        echo "Changing default shell to zsh"
+        chsh -s $(which zsh)
+    fi
 fi
 
 if [ $INSTALL_NVIM == true ]; then
@@ -112,6 +121,8 @@ if [ $INSTALL_NVIM == true ]; then
         sudo apt -qq install neovim ripgrep fd-find unzip -y
     elif $PACMAN; then
         sudo pacman -S neovim ripgrep fd rust glow unzip --noconfirm
+    elif $BREW; then
+        brew install neovim ripgrep fd glow unzip
     fi
 fi
 
