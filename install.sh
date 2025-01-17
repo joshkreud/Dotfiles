@@ -59,7 +59,6 @@ ln -nfs $RC_DIR/.bash_profile $HOME/.bash_profile
 ln -nfs $RC_DIR/.vimrc $HOME/.vimrc
 ln -nfs $RC_DIR/.gitconfig $HOME/.gitconfig
 ln -nfs $RC_DIR/.inputrc $HOME/.inputrc
-ln -nfs $RC_DIR/fish $XDG_CONFIG_HOME/fish
 mkdir -p $XDG_CONFIG_HOME/alacritty
 ln -nfs $RC_DIR/alacritty.yml $XDG_CONFIG_HOME/alacritty/alacritty.yml
 ln -nfs  $RC_DIR/.vim $HOME/.vim
