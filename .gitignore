@@ -1,2 +1,4 @@
 lazy-lock.json
 rcfiles/.vim/undodir/*
+
+.DS_Store
