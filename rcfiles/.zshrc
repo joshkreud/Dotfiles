@@ -1,3 +1,5 @@
+set +x
+
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zmodload zsh/zprof
 fi
@@ -7,6 +9,7 @@ export ZSH="$HOME/.oh-my-zsh"
 autoload -Uz compinit
 # Only check completion dump once per day
 if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null) ]; then
+  echo "Rebuilding completion dump file..."
   compinit
 else
   compinit -C
@@ -40,18 +43,31 @@ prompt_context() {
 
 export NVM_DIR="$HOME/.nvm"
 
-load_nvm() {
+
+load_nvm_and_unset() {
+  unset -f nvm npm npx
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 }
 
 nvm() {
-  # Remove this function and load the real nvm
-  unset -f nvm
-  load_nvm
+  load_nvm_and_unset
   nvm "$@"
+}
+
+npm() {
+  load_nvm_and_unset
+  npm "$@"
+}
+
+npx() {
+  load_nvm_and_unset
+  npx "$@"
 }
 
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zprof
 fi
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/joshuakreuder/.cache/lm-studio/bin"
