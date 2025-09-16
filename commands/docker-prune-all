@@ -1,0 +1,4 @@
+#!/bin/bash
+# Just a Helper script to prune all builtup docker stuff
+docker system prune -a --volumes -f
+docker builder prune -a -f
