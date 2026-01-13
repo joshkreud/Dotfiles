@@ -62,6 +62,7 @@ ln -nfs $RC_DIR/.inputrc $HOME/.inputrc
 mkdir -p $XDG_CONFIG_HOME/alacritty
 ln -nfs $RC_DIR/alacritty.yml $XDG_CONFIG_HOME/alacritty/alacritty.yml
 ln -nfs  $RC_DIR/.vim $HOME/.vim
+ln -nfs $SCRIPT_DIR/.config $XDG_CONFIG_HOME/
 
 RCD_DIR=$HOME/.rc.d
 mkdir -p $RCD_DIR
@@ -90,6 +91,12 @@ elif $BREW; then
     brew install keychain tmux vim socat fd
 fi
 
+echo "==> Installing Starship Prompt"
+curl -sS https://starship.rs/install.sh > /tmp/starship_install.sh
+chmod +x /tmp/starship_install.sh
+/tmp/starship_install.sh -y --bin-dir $HOME/.local/bin
+rm /tmp/starship_install.sh
+
 if [ $INSTALL_ZSH == true ]; then
     echo "==> Installing ZSH and OhMyZSH"
     if $APT;then
@@ -100,7 +107,6 @@ if [ $INSTALL_ZSH == true ]; then
         brew install zsh fzf
     fi
 
-    [ -z $ZSH ] && echo "===> Installing OhMyZsh" && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || true
     ln -nfs $RC_DIR/.zshrc $HOME/.zshrc
 
     if [[ $SHELL != */zsh ]]; then
