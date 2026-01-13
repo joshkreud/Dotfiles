@@ -117,8 +117,7 @@ fi
 
 if [ $INSTALL_NVIM == true ]; then
     echo "==> Installing Nvim"
-    ln -nfs $RC_DIR/nvchad $XDG_CONFIG_HOME/nvim
-    ln -nfs $RC_DIR/nvchad_custom $XDG_CONFIG_HOME/nvim/lua/custom
+    ln -nfs $RC_DIR/nvchad_custom $XDG_CONFIG_HOME/nvim/
     rm -rf $HOME/.local/share/nvim/
 
     if $APT;then
