@@ -4,16 +4,6 @@ if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zmodload zsh/zprof
 fi
 
-autoload -Uz compinit
-# Only check completion dump once per day
-if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null) ]; then
-  echo "Rebuilding completion dump file..."
-  compinit
-else
-  compinit -C
-fi
-
-
 for file in $(find $HOME/.rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name "*.zshrc" \)); do
   source "$file"
 done
