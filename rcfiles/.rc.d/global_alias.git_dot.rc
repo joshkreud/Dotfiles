@@ -1,26 +1,46 @@
+#!/bin/bash
+
+# General Aliases
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 alias lh='ls -lha'
+
+# Use fdfind if available (Debian-based distros)
 if command -v fdfind >/dev/null 2>&1; then
     alias fd='fdfind'
 fi
 alias sudo="sudo " #Preserve Aliases in sudo
+
+# Docker
 alias docker-compose='docker compose'
 alias ddup='docker-compose up -d'
 alias ddupf='docker-compose up -d --force-recreate'
 alias ddown='docker-compose down'
 alias dc='docker-compose'
 alias odev='devcontainer open'
+
+# Like Nmap but faster
 alias rustscan='docker run -it --rm --name rustscan rustscan/rustscan'
-alias ssh-keyrem='ssh-keygen -f $HOME/.ssh/known_hosts -R'
+
 alias vi='nvim'
 alias vim='nvim'
 alias vif='nvim $(fzf)'
+
+alias ssh-keyrem='ssh-keygen -f $HOME/.ssh/known_hosts -R'
 alias echopath='tr ":" "\n" <<< "$PATH"'
 alias clip='wl-copy'
+
+# FZF code open aliases
 alias fp='cd $(fzf_open_code -s)'
 alias fc='fzf_open_code'
+
+# WSL open explorer
 alias oe='wsl_open_explorer'
+
+# Bitwarden unlock and export session
 alias bw-open='$(bw unlock | grep "^\$ export" | cut -c 3-)'
+
+# Docker image explorer
+alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock docker.io/wagoodman/dive"
 
