@@ -1,7 +1,8 @@
-FOLDERS=("$HOME/.cargo/bin" "$HOME/.local/bin", "$HOME/.local/bin")
+#!/bin/bash
+FOLDERS=("$HOME/.cargo/bin" "$HOME/.local/bin" "$HOME/.local/bin" "$HOME/.cache/lm-studio/bin")
 
-for folder in $FOLDERS; do
-    if [ -d $folder ]; then
+for folder in "${FOLDERS[@]}"; do
+    if [ -d "$folder" ]; then
         export PATH=$PATH:$folder
     fi
 done
