@@ -3,3 +3,14 @@ export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:=$HOME/.config}
 
 export FZF_DEFAULT_COMMAND='fd --type file --strip-cwd-prefix --exclude .git --hidden --follow'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# fzf shell integration: enables CTRL-R (history), CTRL-T (files), ALT-C (cd)
+if command -v fzf &>/dev/null; then
+  source <(fzf --zsh)
+fi
+
+# CTRL-R options: Ctrl-Y copies selected command to clipboard (macOS pbcopy)
+export FZF_CTRL_R_OPTS="
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'CTRL-Y → copy to clipboard'"
