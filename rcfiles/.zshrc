@@ -14,6 +14,9 @@ for file in $(find $HOME/.rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name
   fi
 done
 
+# Make Zsh completion case-insensitive (e.g., `cd Doc<Tab>` matches `Documents`).
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'm:{A-Z}={a-z}'
+
 eval "$(starship init zsh)"
 unsetopt autocd
 
