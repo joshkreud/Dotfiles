@@ -27,28 +27,8 @@ prompt_context() {
 }
 
 export NVM_DIR="$HOME/.nvm"
-
-
-load_nvm_and_unset() {
-  unset -f nvm npm npx
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-}
-
-nvm() {
-  load_nvm_and_unset
-  nvm "$@"
-}
-
-npm() {
-  load_nvm_and_unset
-  npm "$@"
-}
-
-npx() {
-  load_nvm_and_unset
-  npx "$@"
-}
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zprof
