@@ -1,0 +1,12 @@
+# Load custom CA certificates into every shell session.
+#
+# Set CUSTOM_CA_CERTS in a machine-specific rc.d file to point at your
+# directory of additional CA certificates (.cer / .pem / .crt).
+#
+# Rebuild the concatenated bundle with:
+#   REBUILD_CA_BUNDLE=1
+# before starting a new shell (or export it in your machine-specific file).
+
+if [ -n "${CUSTOM_CA_CERTS:-}" ] && [ -d "$CUSTOM_CA_CERTS" ]; then
+    eval "$(load_custom_ca_certs "$CUSTOM_CA_CERTS")"
+fi

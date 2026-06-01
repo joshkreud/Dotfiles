@@ -1,0 +1,85 @@
+#!/bin/bash
+# Usage: eval "$(load_custom_ca_certs <custom_certs_dir>)"
+#
+# Converts .cer files to .pem (autoconversion), concatenates them with the
+# system CA bundle, and prints export statements for the calling shell.
+#
+# Set REBUILD_CA_BUNDLE=1 to force rebuild; otherwise the cached bundle in
+# ~/.rc.d/concatenated_cacert.pem is reused.
+#
+# Platform support: macOS (python certifi → /etc/ssl/cert.pem),
+#                   Linux (/etc/ssl/certs/ca-certificates.crt).
+
+set -e
+
+CUSTOM_CA_DIR="${1:-}"
+REBUILD="${REBUILD_CA_BUNDLE:-0}"
+
+# --- detect system cert bundle -------------------------------------------
+CERT_PATH=""
+if command -v python3 &>/dev/null; then
+    CERT_PATH=$(python3 -m certifi 2>/dev/null || true)
+fi
+if [ -z "$CERT_PATH" ] || [ ! -f "$CERT_PATH" ]; then
+    if   [ -f /etc/ssl/certs/ca-certificates.crt ]; then
+        CERT_PATH="/etc/ssl/certs/ca-certificates.crt"
+    elif [ -f /etc/ssl/cert.pem ]; then
+        CERT_PATH="/etc/ssl/cert.pem"
+    elif [ -f /etc/pki/tls/certs/ca-bundle.crt ]; then
+        CERT_PATH="/etc/pki/tls/certs/ca-bundle.crt"
+    fi
+fi
+
+if [ -z "$CERT_PATH" ] || [ ! -f "$CERT_PATH" ]; then
+    echo "load_custom_ca_certs: could not locate system CA bundle" >&2
+    exit 1
+fi
+
+CONCAT_CERT="$HOME/.rc.d/concatenated_cacert.pem"
+
+# --- autoconvert & rebuild ------------------------------------------------
+if [ -n "$CUSTOM_CA_DIR" ] && [ -d "$CUSTOM_CA_DIR" ] && [ "$REBUILD" -eq 1 ]; then
+    >&2 echo "load_custom_ca_certs: converting .cer → .pem in $CUSTOM_CA_DIR"
+
+    find "$CUSTOM_CA_DIR" -type f -name "*.cer" -print0 | while IFS= read -r -d '' cer; do
+        pem="${cer%.cer}.pem"
+        crt="${cer%.cer}.crt"
+        if [ ! -f "$pem" ]; then
+            if openssl x509 -inform PEM -in "$cer" -out "$pem" -noout 2>/dev/null; then
+                cp "$cer" "$pem"
+            else
+                openssl x509 -inform DER -in "$cer" -out "$pem"
+            fi
+            >&2 echo "  converted: $(basename "$cer") → $(basename "$pem")"
+        fi
+        if [ ! -f "$crt" ]; then
+            cp "$pem" "$crt"
+            >&2 echo "  copied:    $(basename "$pem") → $(basename "$crt")"
+        fi
+    done
+
+    >&2 echo "load_custom_ca_certs: rebuilding $CONCAT_CERT"
+    cat "$CERT_PATH" > "$CONCAT_CERT"
+    find "$CUSTOM_CA_DIR" -type f -name "*.pem" -print0 | while IFS= read -r -d '' cert; do
+        echo -e "\n# Certificate from: $cert" >> "$CONCAT_CERT"
+        cat "$cert" >> "$CONCAT_CERT"
+    done
+elif [ -f "$CONCAT_CERT" ]; then
+    : # use existing cached bundle
+else
+    CONCAT_CERT="$CERT_PATH"
+fi
+
+# --- tighten permissions on the generated bundle ---------------------------
+if [ -f "$CONCAT_CERT" ]; then
+    chmod 600 "$CONCAT_CERT"
+fi
+
+# --- emit export statements -----------------------------------------------
+cat <<EOF
+export SSL_CERT_FILE="$CONCAT_CERT"
+export REQUESTS_CA_BUNDLE="$CONCAT_CERT"
+export CURL_CA_BUNDLE="$CONCAT_CERT"
+export NODE_EXTRA_CA_CERTS="$CONCAT_CERT"
+export NODE_OPTIONS="--use-openssl-ca"
+EOF
