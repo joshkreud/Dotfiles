@@ -1,34 +1,97 @@
-# Joshs Dotfiles
+# Joshua Kreuder's Dotfiles
 
-## Installation
+Cross-platform dotfiles for Bash, Zsh, Tmux, Vim/Neovim, and Git — managed via symlinks with a modular `~/.rc.d` system.
+
+## Quick Start
 
 ```bash
-bash install.sh
+git clone git@github.com:joshkreud/Dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+bash install.sh                # add -z for Zsh, -n for Neovim
 ```
 
-Please also install a Nerdfont for CLI symbols: https://www.nerdfonts.com:q
+Install a [Nerd Font](https://www.nerdfonts.com) for CLI icons.
 
-# Custom Commands
+## What Gets Symlinked
 
-Some commands will be added to PATH
+All config files live under [`rcfiles/`](rcfiles/). The installer symlinks them to `$HOME` and `$XDG_CONFIG_HOME`.
 
-| Command          | Function                                                     |
-| ---------------- | ------------------------------------------------------------ |
-| wslssh           | copy .ssh from windows C to wsl .ssh and fix permissions     |
-| ensure-ssh-agent | ensures ssh agent is started (legacy, use keyhchain instead) |
+See: [`.bashrc`](rcfiles/.bashrc) · [`.zshrc`](rcfiles/.zshrc) · [`.bash_profile`](rcfiles/.bash_profile) · [`.inputrc`](rcfiles/.inputrc) · [`.vimrc`](rcfiles/.vimrc) · [`.gitconfig`](rcfiles/.gitconfig) · [`.tmux.conf`](rcfiles/.tmux.conf) · [`alacritty.yml`](rcfiles/alacritty.yml) · [`.config/starship.toml`](.config/starship.toml) · [NvChad config](rcfiles/nvchad/)
 
-## Custom rc.d
+## Modular rc.d System
 
-Zshrc and bashrc are configured to source files from `$HOME/rc.d`.
+Both `.bashrc` and `.zshrc` auto-source files from `~/.rc.d/` matching these patterns:
 
-| Main conf       | rc.d suffix                           |
-| --------------- | ------------------------------------- |
-| `.bashrc`       | `*.rc`, `*.bashrc`                    |
-| `.bash_profile` | all from .bashrc and `*.bash_profile` |
-| `.zshrc`        | `*.rc`, `*.zshrc`                     |
+| Shell        | Patterns                         |
+| ------------ | -------------------------------- |
+| Bash         | `*.rc`, `*.bashrc`               |
+| Bash (login) | Bash patterns + `*.bash_profile` |
+| Zsh          | `*.rc`, `*.zshrc`                |
 
-## Config SSH Keys for Agent:
-Add the following eval line to a file in `~/.rc.d/`
+Drop a file into `~/.rc.d/` and it's picked up automatically — no edits to the main dotfiles needed. Symlinks are fine.
+
+Machine-specific config (paths, secrets, host-specific tools) goes into a file like `~/.rc.d/00_$(hostname).rc`.
+
+Built-in modules: [`path.rc`](rcfiles/.rc.d/path.rc) · [`common.rc`](rcfiles/.rc.d/common.rc) · [`global_alias.git_dot.rc`](rcfiles/.rc.d/global_alias.git_dot.rc) · [`ca_certs.rc`](rcfiles/.rc.d/ca_certs.rc)
+
+---
+
+## Custom Commands
+
+All scripts in [`commands/`](commands/) are added to `$PATH`.
+
+| Command                | Description                                                            |
+| ---------------------- | ---------------------------------------------------------------------- |
+| `wslssh`               | Copy `.ssh` from Windows to WSL, fix permissions                       |
+| `ensure-ssh-agent`     | Start `ssh-agent` and add keys (legacy — prefer keychain)              |
+| `fzf_open_code`        | FZF-pick a git repo in `~/dev/`, open in VS Code or devcontainer       |
+| `install_bw_cli`       | Download and install Bitwarden CLI                                     |
+| `bw-unlock-session`    | Unlock Bitwarden, export `BW_SESSION`                                  |
+| `docker-prune-all`     | Aggressively prune Docker system + build cache                         |
+| `wsl_open_explorer`    | Open a directory in Windows Explorer from WSL                          |
+| `mass_set_git_email`   | Bulk-set `user.email` across all git repos under a directory           |
+| `load_custom_ca_certs` | Convert `.cer` → `.pem`, concat with system CA bundle, export env vars |
+
+---
+
+## Custom CA Certificates
+
+To inject corporate CA certificates into every shell session:
+
 ```bash
-eval $(/usr/bin/keychain --eval --noask --quiet id_rsa id_rsa_priv)
+# In a machine-specific ~/.rc.d file:
+export CUSTOM_CA_CERTS="$HOME/dev/your-org/ca_certs"
+
+# Rebuild the bundle once (or after certs change):
+REBUILD_CA_BUNDLE=1
 ```
+
+[`ca_certs.rc`](rcfiles/.rc.d/ca_certs.rc) calls [`load_custom_ca_certs`](commands/load_custom_ca_certs), which auto-converts `.cer` → `.pem`, concatenates them with the system CA bundle, and exports `SSL_CERT_FILE`, `REQUESTS_CA_BUNDLE`, `CURL_CA_BUNDLE`, `NODE_EXTRA_CA_CERTS`, and `NODE_OPTIONS`.
+
+**macOS only** — also broadcast these to GUI apps via `launchctl setenv` (see example in [`load_custom_ca_certs`](commands/load_custom_ca_certs)).
+
+---
+
+## SSH Key Management
+
+For persistent SSH agent with `keychain`, add to `~/.rc.d/`:
+
+```bash
+eval $(/usr/bin/keychain --eval --noask --quiet <name_of_id_rsa_file>)
+```
+
+---
+
+## Platform Support
+
+The installer auto-detects **apt** (Debian/Ubuntu/WSL), **pacman** (Arch), and **brew** (macOS). Core packages: `git`, `gcc`, `keychain`, `tmux`, `vim`, `socat`, `fd`.
+
+---
+
+## Post-Install
+
+1. **Nerd Font** — [nerdfonts.com](https://www.nerdfonts.com) (Starship + NvChad icons)
+2. **Tmux plugins** — `<prefix> + I` inside tmux
+3. **Bitwarden CLI** — `install_bw_cli`
+4. **VS Code CLI** — needed for `fzf_open_code` and `code`
+5. **Custom CA certs** — set `$CUSTOM_CA_CERTS`, run `REBUILD_CA_BUNDLE=1`
