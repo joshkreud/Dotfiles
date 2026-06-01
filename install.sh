@@ -70,10 +70,13 @@ chmod 700 $RCD_DIR
 for file in $(find $RC_DIR/.rc.d -type f);do
     ln -nfs $file $RCD_DIR/$(basename -- $file)
 done
+# Tighten permissions on all rc.d files (defence-in-depth)
+find $RCD_DIR -maxdepth 1 -type f -exec chmod 600 {} +
 
 echo "==> Adding Custom Commands to Path"
 CMD_DIR=$SCRIPT_DIR/commands
 echo "export PATH=\$PATH:$CMD_DIR" > $RCD_DIR/josh_dotfiles_custom.rc
+chmod 600 $RCD_DIR/josh_dotfiles_custom.rc
 
 TMUX_PLUG_DIR=$HOME/.tmux/plugins
 mkdir -p $TMUX_PLUG_DIR
