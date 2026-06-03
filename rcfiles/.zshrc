@@ -7,8 +7,10 @@ fi
 for file in $(find $HOME/.rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name "*.zshrc" \)); do
   # Skip group/world-writable files (tamper guard)
   if [ -f "$file" ] && [ -O "$file" ]; then
-    perms=$(stat -f '%Lp' "$file" 2>/dev/null || stat -c '%a' "$file" 2>/dev/null)
-    if [ -z "$perms" ] || [ $((perms & 022)) -eq 0 ] 2>/dev/null; then
+    # Follow symlinks so we validate the target file mode, not link metadata.
+    perms=$(stat -L -f '%Lp' "$file" 2>/dev/null || stat -L -c '%a' "$file" 2>/dev/null || stat -f '%Lp' "$file" 2>/dev/null || stat -c '%a' "$file" 2>/dev/null)
+    # Parse mode as octal before masking group/other write bits.
+    if [ -z "$perms" ] || [ $((8#$perms & 8#022)) -eq 0 ] 2>/dev/null; then
       source "$file"
     fi
   fi
