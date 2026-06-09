@@ -1,5 +1,5 @@
 #!/bin/bash
-FOLDERS=("$HOME/.cargo/bin" "$HOME/.local/bin" "$HOME/.local/bin" "$HOME/.cache/lm-studio/bin")
+FOLDERS=("$HOME/.cargo/bin" "$HOME/.local/bin" "$HOME/.cache/lm-studio/bin")
 
 for folder in "${FOLDERS[@]}"; do
     if [ -d "$folder" ]; then
