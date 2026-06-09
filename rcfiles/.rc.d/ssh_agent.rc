@@ -1,23 +1,41 @@
-# SSH Agent management via keychain (cross-platform)
+# SSH Agent management
 #
-# On macOS: also broadcasts SSH_AUTH_SOCK to launchd so GUI apps
-# launched via Spotlight/Raycast inherit the agent socket.
-# Without this, apps like VS Code use the Apple-native ssh-agent
-# which has no keys loaded.
+# macOS: uses the launchd-managed native ssh-agent with macOS Keychain integration.
+#   The launchd socket path changes on each boot — we find it dynamically.
+#   Passphrase is retrieved from macOS Keychain silently (no prompt, no hang).
 #
-# Prerequisites: brew install keychain  (or apt/pacman equivalent)
+#   One-time bootstrap (run once per machine):
+#     ssh-add --apple-use-keychain ~/.ssh/id_pw_ed25519
+#   Requires in ~/.ssh/config:
+#     Host * / AddKeysToAgent yes / UseKeychain yes
 #
-# Configure which keys to load:
+# Linux / non-macOS: falls back to keychain (brew/apt install keychain).
+#   Use --noask so startup never hangs; keys load on first ssh connection instead.
+#
+# Configure which keys to load (space-separated paths):
 #   export SSH_KEY_PATH="$HOME/.ssh/id_ed25519 $HOME/.ssh/id_rsa"
 # Defaults to $HOME/.ssh/id_ed25519 if unset.
 
 : "${SSH_KEY_PATH:=$HOME/.ssh/id_ed25519}"
 
-if command -v keychain >/dev/null 2>&1; then
-	eval $(keychain --nogui --eval -q ${SSH_KEY_PATH} 2>/dev/null)
+if command -v launchctl >/dev/null 2>&1; then
+    # ── macOS: native launchd-managed ssh-agent ───────────────────────────────
+    # The socket path contains a boot-time random token; discover it at runtime.
+    _native_sock=$(ls /var/run/com.apple.launchd.*/Listeners 2>/dev/null | head -1)
+    if [ -n "${_native_sock:-}" ] && [ -S "$_native_sock" ]; then
+        export SSH_AUTH_SOCK="$_native_sock"
+        # Load keys using macOS Keychain for the passphrase — silent, no TTY needed.
+        # shellcheck disable=SC2086
+        ssh-add --apple-use-keychain -q $SSH_KEY_PATH 2>/dev/null || true
+        # Broadcast socket to GUI-launched processes (VS Code, Raycast, etc.)
+        launchctl setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK" >/dev/null 2>&1 || true
+    fi
+    unset _native_sock
 
-	# Broadcast SSH agent socket to GUI-launched processes (macOS only)
-	if command -v launchctl >/dev/null 2>&1 && [ -n "${SSH_AUTH_SOCK:-}" ]; then
-		launchctl setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK" >/dev/null 2>&1 || true
-	fi
+elif command -v keychain >/dev/null 2>&1; then
+    # ── Linux / non-macOS: keychain ──────────────────────────────────────────
+    # --noask: never prompt; keys that need a passphrase will be picked up by
+    # AddKeysToAgent on first actual ssh connection.
+    # shellcheck disable=SC2086
+    eval "$(keychain --noask --nogui --eval -q $SSH_KEY_PATH)"
 fi

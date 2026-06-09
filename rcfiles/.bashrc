@@ -99,7 +99,7 @@ PATH=$HOME/.local/bin:$PATH
 export PATH=$PATH
 export EDITOR=vim
 
-for file in $(find $HOME/.rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name "*.bashrc" \)); do
+for file in $(find $HOME/.rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name "*.bashrc" \) | sort); do
   # Skip group/world-writable files (tamper guard)
   if [ -f "$file" ] && [ -O "$file" ]; then
     perms=$(stat -f '%Lp' "$file" 2>/dev/null || stat -c '%a' "$file" 2>/dev/null)

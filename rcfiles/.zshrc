@@ -4,7 +4,7 @@ if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zmodload zsh/zprof
 fi
 
-for file in $(find $HOME/.rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name "*.zshrc" \)); do
+for file in $(find $HOME/.rc.d \( -type f -o -type l \) \( -name "*.rc" -o -name "*.zshrc" \) | sort); do
   # Skip group/world-writable files (tamper guard)
   if [ -f "$file" ] && [ -O "$file" ]; then
     # Follow symlinks so we validate the target file mode, not link metadata.
