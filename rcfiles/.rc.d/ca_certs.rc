@@ -6,7 +6,34 @@
 # Rebuild the concatenated bundle with:
 #   REBUILD_CA_BUNDLE=1
 # before starting a new shell (or export it in your machine-specific file).
+#
+# On macOS, also broadcasts CA env vars to GUI-launched processes
+# (VS Code, background agents) via launchctl setenv.
 
 if [ -n "${CUSTOM_CA_CERTS:-}" ] && [ -d "$CUSTOM_CA_CERTS" ]; then
     eval "$(load_custom_ca_certs "$CUSTOM_CA_CERTS")"
+
+    # Broadcast CA env vars to GUI-launched processes (macOS only)
+    if command -v launchctl >/dev/null 2>&1; then
+        launchctl setenv SSL_CERT_FILE "$SSL_CERT_FILE" >/dev/null 2>&1 || true
+        launchctl setenv REQUESTS_CA_BUNDLE "$SSL_CERT_FILE" >/dev/null 2>&1 || true
+        launchctl setenv CURL_CA_BUNDLE "$SSL_CERT_FILE" >/dev/null 2>&1 || true
+        launchctl setenv NODE_EXTRA_CA_CERTS "$SSL_CERT_FILE" >/dev/null 2>&1 || true
+        # Append --use-openssl-ca only if not already present in the launchd env
+        _lc_node_opts=$(launchctl getenv NODE_OPTIONS 2>/dev/null || true)
+        case "${_lc_node_opts:-}" in
+            *--use-openssl-ca*) ;;
+            "") launchctl setenv NODE_OPTIONS "--use-openssl-ca" >/dev/null 2>&1 || true ;;
+            *)  launchctl setenv NODE_OPTIONS "${_lc_node_opts} --use-openssl-ca" >/dev/null 2>&1 || true ;;
+        esac
+        unset _lc_node_opts
+    fi
+
+    # Point npm at the custom CA bundle (once, via ~/.npmrc)
+    if command -v npm >/dev/null 2>&1; then
+        npm_cafile=$(npm config get cafile 2>/dev/null || true)
+        if [ -z "$npm_cafile" ] || [ "$npm_cafile" = "null" ] || [ "$npm_cafile" = "undefined" ]; then
+            npm config set cafile "$SSL_CERT_FILE" >/dev/null 2>&1
+        fi
+    fi
 fi

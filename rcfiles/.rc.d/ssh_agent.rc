@@ -1,0 +1,23 @@
+# SSH Agent management via keychain (cross-platform)
+#
+# On macOS: also broadcasts SSH_AUTH_SOCK to launchd so GUI apps
+# launched via Spotlight/Raycast inherit the agent socket.
+# Without this, apps like VS Code use the Apple-native ssh-agent
+# which has no keys loaded.
+#
+# Prerequisites: brew install keychain  (or apt/pacman equivalent)
+#
+# Configure which keys to load:
+#   export SSH_KEY_PATH="$HOME/.ssh/id_ed25519 $HOME/.ssh/id_rsa"
+# Defaults to $HOME/.ssh/id_ed25519 if unset.
+
+: "${SSH_KEY_PATH:=$HOME/.ssh/id_ed25519}"
+
+if command -v keychain >/dev/null 2>&1; then
+	eval $(keychain --nogui --eval -q ${SSH_KEY_PATH} 2>/dev/null)
+
+	# Broadcast SSH agent socket to GUI-launched processes (macOS only)
+	if command -v launchctl >/dev/null 2>&1 && [ -n "${SSH_AUTH_SOCK:-}" ]; then
+		launchctl setenv SSH_AUTH_SOCK "$SSH_AUTH_SOCK" >/dev/null 2>&1 || true
+	fi
+fi

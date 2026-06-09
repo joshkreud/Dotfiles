@@ -32,7 +32,9 @@ Drop a file into `~/.rc.d/` and it's picked up automatically — no edits to the
 
 Machine-specific config (paths, secrets, host-specific tools) goes into a file like `~/.rc.d/00_$(hostname).rc`.
 
-Built-in modules: [`path.rc`](rcfiles/.rc.d/path.rc) · [`common.rc`](rcfiles/.rc.d/common.rc) · [`global_alias.git_dot.rc`](rcfiles/.rc.d/global_alias.git_dot.rc) · [`ca_certs.rc`](rcfiles/.rc.d/ca_certs.rc)
+Built-in modules: [`path.rc`](rcfiles/.rc.d/path.rc) · [`common.rc`](rcfiles/.rc.d/common.rc) · [`global_alias.git_dot.rc`](rcfiles/.rc.d/global_alias.git_dot.rc) · [`ca_certs.rc`](rcfiles/.rc.d/ca_certs.rc) · [`ssh_agent.rc`](rcfiles/.rc.d/ssh_agent.rc)
+
+Files are loaded in alphabetical order. Machine-specific config uses a `00_` prefix so it runs before shared modules.
 
 ---
 
@@ -68,17 +70,32 @@ REBUILD_CA_BUNDLE=1
 
 [`ca_certs.rc`](rcfiles/.rc.d/ca_certs.rc) calls [`load_custom_ca_certs`](commands/load_custom_ca_certs), which auto-converts `.cer` → `.pem`, concatenates them with the system CA bundle, and exports `SSL_CERT_FILE`, `REQUESTS_CA_BUNDLE`, `CURL_CA_BUNDLE`, `NODE_EXTRA_CA_CERTS`, and `NODE_OPTIONS`.
 
-**macOS only** — also broadcast these to GUI apps via `launchctl setenv` (see example in [`load_custom_ca_certs`](commands/load_custom_ca_certs)).
+On macOS, also broadcasts these env vars to GUI apps via `launchctl setenv` so apps launched via Spotlight/Raycast inherit the custom CA bundle.
 
 ---
 
 ## SSH Key Management
 
-For persistent SSH agent with `keychain`, add to `~/.rc.d/`:
+[`ssh_agent.rc`](rcfiles/.rc.d/ssh_agent.rc) manages SSH agents via `keychain` (cross-platform) and broadcasts `SSH_AUTH_SOCK` to GUI apps on macOS via `launchctl setenv`.
+
+To configure which keys to load, set `SSH_KEY_PATH` in a machine-specific `~/.rc.d` file:
 
 ```bash
-eval $(/usr/bin/keychain --eval --noask --quiet <name_of_id_rsa_file>)
+export SSH_KEY_PATH="$HOME/.ssh/id_pw_ed25519 $HOME/.ssh/id_rsa"
 ```
+
+Without this broadcast, macOS GUI apps launched via Spotlight/Raycast (e.g., VS Code host process) inherit the Apple-native ssh-agent socket which has no keys loaded — causing Git operations to fail even though the integrated terminal works fine.
+
+## macOS GUI App Environment
+
+On macOS, GUI apps don't inherit the shell environment — they get `launchd`'s environment. The shared modules handle this:
+
+| Module                                              | Broadcasts                               |
+| --------------------------------------------------- | ---------------------------------------- |
+| [`ca_certs.rc`](rcfiles/.rc.d/ca_certs.rc)          | `SSL_CERT_FILE`, `NODE_EXTRA_CA_CERTS`… |
+| [`ssh_agent.rc`](rcfiles/.rc.d/ssh_agent.rc)        | `SSH_AUTH_SOCK`                          |
+
+No machine-specific configuration needed — it Just Works™ on any Mac that sources these modules.
 
 ---
 
