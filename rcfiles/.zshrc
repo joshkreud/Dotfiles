@@ -35,6 +35,3 @@ export NVM_DIR="$HOME/.nvm"
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zprof
 fi
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/joshuakreuder/.cache/lm-studio/bin"
