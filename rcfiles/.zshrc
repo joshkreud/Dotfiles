@@ -29,8 +29,18 @@ prompt_context() {
 }
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# NVM is expensive to initialize, so wait until a Node command needs it.
+load_nvm() {
+  unset -f nvm node npm npx corepack load_nvm
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+}
+
+nvm() { load_nvm; nvm "$@"; }
+node() { load_nvm; node "$@"; }
+npm() { load_nvm; npm "$@"; }
+npx() { load_nvm; npx "$@"; }
+corepack() { load_nvm; corepack "$@"; }
 
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zprof
