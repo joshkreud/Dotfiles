@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+# Connect to OpenVPN using credentials stored in Bitwarden.
+# Required env vars:
+# - OPENVPN_CONFIG_FILE: path to the .ovpn config file
+# - OPENVPN_BW_NAME: Bitwarden item name or item id
+
+# Ensure secrets are never echoed if caller enabled tracing.
+set +ex
+set -euo pipefail
+
+required_cmds=(bw openvpn mktemp jq oathtool)
+for cmd in "${required_cmds[@]}"; do
+	if ! command -v "$cmd" >/dev/null 2>&1; then
+		echo "Error: required command not found: $cmd" >&2
+		exit 1
+	fi
+done
+
+if [[ -z "${OPENVPN_CONFIG_FILE:-}" ]]; then
+	echo "Error: OPENVPN_CONFIG_FILE is not set." >&2
+	exit 1
+fi
+
+if [[ -z "${OPENVPN_BW_NAME:-}" ]]; then
+	echo "Error: OPENVPN_BW_NAME is not set." >&2
+	exit 1
+fi
+
+if [[ ! -f "$OPENVPN_CONFIG_FILE" ]]; then
+	echo "Error: config file not found: $OPENVPN_CONFIG_FILE" >&2
+	exit 1
+fi
+
+if [[ -z "${BW_SESSION:-}" ]]; then
+	echo "==> BW_SESSION not set. Unlocking Bitwarden for this script run..."
+	BW_SESSION="$(bw unlock --raw)"
+	if [[ -z "$BW_SESSION" ]]; then
+		echo "Error: failed to unlock Bitwarden." >&2
+		exit 1
+	fi
+	export BW_SESSION
+fi
+
+
+echo "==> Reading VPN credentials from Bitwarden item: $OPENVPN_BW_NAME"
+item_json="$(bw get item "$OPENVPN_BW_NAME")"
+
+vpn_username="$(jq -r '.login.username // empty' <<< "$item_json")"
+vpn_password="$(jq -r '.login.password // empty' <<< "$item_json")"
+totp_raw="$(jq -r '.login.totp // empty' <<< "$item_json")"
+
+if [[ -z "$vpn_username" ]]; then
+	echo "Error: no username found in Bitwarden item: $OPENVPN_BW_NAME" >&2
+	exit 1
+fi
+
+if [[ -z "$vpn_password" ]]; then
+	echo "Error: no password found in Bitwarden item: $OPENVPN_BW_NAME" >&2
+	exit 1
+fi
+
+if [[ -z "$totp_raw" ]]; then
+	echo "Error: no TOTP secret found in Bitwarden item: $OPENVPN_BW_NAME" >&2
+	exit 1
+fi
+
+# Compute TOTP locally — supports bare base32 secret or otpauth:// URI
+if [[ "$totp_raw" == otpauth://* ]]; then
+	totp_secret="$(printf '%s' "$totp_raw" | grep -oE '(^|[?&])secret=[^&]+' | cut -d= -f2)"
+else
+	totp_secret="$totp_raw"
+fi
+vpn_otp="$(oathtool --totp -b "$totp_secret")"
+
+auth_file="$(mktemp)"
+cleanup() {
+	rm -f "$auth_file"
+}
+trap cleanup EXIT
+
+chmod 600 "$auth_file"
+{
+	printf '%s\n' "$vpn_username"
+	printf '%s%s\n' "$vpn_password" "$vpn_otp"
+} >"$auth_file"
+
+echo "==> Starting OpenVPN using config: $OPENVPN_CONFIG_FILE"
+openvpn_bin="$(command -v openvpn)"
+
+if [[ "$EUID" -eq 0 ]]; then
+	"$openvpn_bin" --config "$OPENVPN_CONFIG_FILE" --auth-user-pass "$auth_file"
+else
+	sudo -n "$openvpn_bin" --config "$OPENVPN_CONFIG_FILE" --auth-user-pass "$auth_file"
+fi
+
+
